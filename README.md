@@ -69,7 +69,7 @@ A modern, offline-first Progressive Web App (PWA) designed to empower small and 
 ![Farm Tracker](./docs/screenshots/tracker.png)
 
 ### Live Demo
-🚀 [View Live Demo](#) *(Coming Soon)*
+🚀 [View Live Demo](https://smart-farmer-theta.vercel.app/) 
 
 ---
 
