@@ -813,7 +813,7 @@ const SmartFarmerApp = () => {
           {/* Credits */}
           <div className="mt-8 text-center">
             <p className="text-green-200 text-xs">
-              Developed by <span className="font-semibold">Ajibade Tosin Francais, Omoyeni Naomi, Sandra Ogechi Ezeugonna & Tolough Nelson Aondongu</span>
+              Developed by <span className="font-semibold">Ajibade Tosin Francis, Omoyeni Naomi, Sandra Ogechi Ezeugonna & Tolough Nelson Aondongu</span>
             </p>
           </div>
         </div>
