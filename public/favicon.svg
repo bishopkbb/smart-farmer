@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background Circle with Gradient -->
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="50" cy="50" r="50" fill="url(#grad)"/>
+  
+  <!-- Leaf Icon (Lucide Leaf style) -->
+  <g transform="translate(50, 50)">
+    <!-- Main leaf shape -->
+    <path d="M -8 -18 Q -18 -8, -18 5 Q -18 15, -8 22 L 0 16 L 8 22 Q 18 15, 18 5 Q 18 -8, 8 -18 Q 0 -12, -8 -18 Z" 
+          fill="white" 
+          stroke="white" 
+          stroke-width="1.5"
+          stroke-linejoin="round"/>
+    
+    <!-- Center vein -->
+    <line x1="0" y1="-12" x2="0" y2="16" 
+          stroke="white" 
+          stroke-width="2" 
+          stroke-linecap="round"
+          opacity="0.6"/>
+    
+    <!-- Left veins -->
+    <path d="M 0 -6 Q -6 -3, -9 2" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="1.5" 
+          stroke-linecap="round"
+          opacity="0.5"/>
+    <path d="M 0 2 Q -7 4, -10 9" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="1.5" 
+          stroke-linecap="round"
+          opacity="0.5"/>
+    
+    <!-- Right veins -->
+    <path d="M 0 -6 Q 6 -3, 9 2" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="1.5" 
+          stroke-linecap="round"
+          opacity="0.5"/>
+    <path d="M 0 2 Q 7 4, 10 9" 
+          fill="none" 
+          stroke="white" 
+          stroke-width="1.5" 
+          stroke-linecap="round"
+          opacity="0.5"/>
+  </g>
+</svg>
