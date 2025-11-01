@@ -3,7 +3,6 @@ import { Leaf, Calendar, BookOpen, Bug, TrendingUp, Menu, X, Sun, Cloud, Droplet
 
 const SmartFarmerApp = () => {
   const [activeTab, setActiveTab] = useState('home');
-  const [menuOpen, setMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [selectedCrop, setSelectedCrop] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -12,6 +11,8 @@ const SmartFarmerApp = () => {
   const [userLocation, setUserLocation] = useState('');
   const [farmingType, setFarmingType] = useState('');
   const [showAddLogModal, setShowAddLogModal] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [farmLogs, setFarmLogs] = useState([
     { crop: 'Maize', datePlanted: '2025-04-15', status: 'Growing', daysLeft: 45 },
     { crop: 'Tomato', datePlanted: '2025-03-20', status: 'Flowering', daysLeft: 20 }
@@ -28,6 +29,22 @@ const SmartFarmerApp = () => {
   const [selectedPestCrop, setSelectedPestCrop] = useState('');
   const [selectedSymptom, setSelectedSymptom] = useState('');
   const [pestSolution, setPestSolution] = useState(null);
+
+  // Notifications data
+  const notifications = [
+    { id: 1, type: 'reminder', title: 'Weeding Due', message: 'Time to weed your Maize farm', time: '2 hours ago', read: false },
+    { id: 2, type: 'alert', title: 'Weather Alert', message: 'Heavy rain expected tomorrow', time: '5 hours ago', read: false },
+    { id: 3, type: 'success', title: 'Harvest Ready', message: 'Your Tomato is ready for harvest', time: '1 day ago', read: true },
+    { id: 4, type: 'info', title: 'Market Update', message: 'Maize prices increased by 15%', time: '2 days ago', read: true }
+  ];
+
+  // Settings options
+  const [settings, setSettings] = useState({
+    notifications: true,
+    darkMode: false,
+    language: 'English',
+    units: 'Metric'
+  });
 
   const pestDatabase = {
     'Maize': {
@@ -317,14 +334,20 @@ const SmartFarmerApp = () => {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-3">
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-all">
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2 hover:bg-gray-100 rounded-full transition-all"
+              >
                 <Bell className="w-5 h-5 text-gray-700" />
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                )}
               </button>
               <button 
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => setShowSettings(!showSettings)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-all"
               >
-                {menuOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
+                <Settings className="w-5 h-5 text-gray-700" />
               </button>
             </div>
           </div>
@@ -446,7 +469,7 @@ const SmartFarmerApp = () => {
             {/* Crop Detail Modal */}
             {selectedCrop && (
               <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedCrop(null)}>
-                <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl animate-scaleIn" onClick={(e) => e.stopPropagation()}>
+                <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                   <div className="text-center mb-6">
                     <div className="text-6xl mb-4">{selectedCrop.icon}</div>
                     <h2 className="text-3xl font-bold text-gray-800">{selectedCrop.name}</h2>
@@ -486,11 +509,11 @@ const SmartFarmerApp = () => {
         {activeTab === 'calendar' && (
           <div className="animate-fadeIn">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">Planting Calendar</h2>
-              <p className="text-gray-600">Plan your farming activities</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Planting Calendar</h2>
+              <p className="text-sm sm:text-base text-gray-600">Plan your farming activities</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {months.map((month, idx) => {
                 const recommendedCrops = getRecommendedCrops(month);
                 return (
@@ -798,6 +821,178 @@ const SmartFarmerApp = () => {
 
       {/* Mobile Bottom Padding */}
       <div className="md:hidden h-20"></div>
+
+      {/* Notifications Panel */}
+      {showNotifications && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowNotifications(false)}>
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                <Bell className="w-6 h-6 mr-2 text-green-600" />
+                Notifications
+              </h2>
+              <button onClick={() => setShowNotifications(false)} className="p-2 hover:bg-gray-100 rounded-full transition-all">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {notifications.map((notif) => (
+                <div key={notif.id} className={`p-4 rounded-2xl border-2 transition-all hover:shadow-md ${
+                  !notif.read ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'
+                }`}>
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start space-x-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        notif.type === 'alert' ? 'bg-red-100 text-red-600' :
+                        notif.type === 'success' ? 'bg-green-100 text-green-600' :
+                        notif.type === 'reminder' ? 'bg-orange-100 text-orange-600' :
+                        'bg-blue-100 text-blue-600'
+                      }`}>
+                        <Bell className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-gray-800 text-sm">{notif.title}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{notif.message}</p>
+                        <p className="text-xs text-gray-400 mt-2">{notif.time}</p>
+                      </div>
+                    </div>
+                    {!notif.read && (
+                      <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setShowNotifications(false)}
+              className="w-full mt-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Panel */}
+      {showSettings && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowSettings(false)}>
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                <Settings className="w-6 h-6 mr-2 text-green-600" />
+                Settings
+              </h2>
+              <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-gray-100 rounded-full transition-all">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              {/* Profile Section */}
+              <div className="pb-6 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Profile</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-sm text-gray-600">Region</label>
+                    <p className="font-semibold text-gray-800">{userLocation.replace(/^\w/, c => c.toUpperCase())} Nigeria</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">Farming Type</label>
+                    <p className="font-semibold text-gray-800">{farmingType.replace(/^\w/, c => c.toUpperCase())}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preferences */}
+              <div className="pb-6 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Preferences</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-gray-800">Notifications</p>
+                      <p className="text-xs text-gray-600">Receive farming reminders</p>
+                    </div>
+                    <button
+                      onClick={() => setSettings({...settings, notifications: !settings.notifications})}
+                      className={`w-12 h-6 rounded-full transition-all ${
+                        settings.notifications ? 'bg-green-500' : 'bg-gray-300'
+                      }`}
+                    >
+                      <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${
+                        settings.notifications ? 'translate-x-6' : 'translate-x-1'
+                      }`}></div>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold text-gray-800">Dark Mode</p>
+                      <p className="text-xs text-gray-600">Switch to dark theme</p>
+                    </div>
+                    <button
+                      onClick={() => setSettings({...settings, darkMode: !settings.darkMode})}
+                      className={`w-12 h-6 rounded-full transition-all ${
+                        settings.darkMode ? 'bg-green-500' : 'bg-gray-300'
+                      }`}
+                    >
+                      <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${
+                        settings.darkMode ? 'translate-x-6' : 'translate-x-1'
+                      }`}></div>
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">Language</label>
+                    <select
+                      value={settings.language}
+                      onChange={(e) => setSettings({...settings, language: e.target.value})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
+                    >
+                      <option>English</option>
+                      <option>Hausa</option>
+                      <option>Yoruba</option>
+                      <option>Igbo</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">Units</label>
+                    <select
+                      value={settings.units}
+                      onChange={(e) => setSettings({...settings, units: e.target.value})}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
+                    >
+                      <option>Metric (kg, ha)</option>
+                      <option>Imperial (lb, acres)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="space-y-3">
+                <button className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+                  Save Changes
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowOnboarding(true);
+                    setShowSettings(false);
+                  }}
+                  className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+                >
+                  Change Region
+                </button>
+                <button className="w-full py-3 text-red-600 font-semibold hover:bg-red-50 rounded-xl transition-all">
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Log Modal */}
       {showAddLogModal && (
