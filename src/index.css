@@ -2,6 +2,150 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Beautiful Dark Mode with Green Theme */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background: linear-gradient(135deg, #064e3b 0%, #022c22 100%) !important;
+  color: #f0fdf4;
+}
+
+.dark .bg-gradient-to-br.from-green-50 {
+  background: linear-gradient(to bottom right, #065f46, #064e3b) !important;
+}
+
+.dark .bg-white {
+  background-color: #0a2f29 !important;
+  color: #f0fdf4;
+  border: 1px solid #10b981;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dark .bg-gray-50 {
+  background-color: #031a16 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #065f46 !important;
+  color: #f0fdf4;
+}
+
+.dark .bg-gray-200 {
+  background-color: #047857 !important;
+  color: #f0fdf4;
+}
+
+.dark .bg-green-50 {
+  background-color: #0a2f29 !important;
+  color: #ecfdf5 !important;
+}
+
+.dark .bg-green-50 * {
+  color: #ecfdf5 !important;
+}
+
+.dark .bg-green-100 {
+  background-color: #065f46 !important;
+  color: #a7f3d0 !important;
+}
+
+.dark .bg-blue-50 {
+  background-color: #1e3a5f !important;
+  color: #bfdbfe !important;
+}
+
+.dark .bg-orange-50 {
+  background-color: #7c2d12 !important;
+  color: #fed7aa !important;
+}
+
+.dark .bg-purple-50 {
+  background-color: #4c1d95 !important;
+  color: #ddd6fe !important;
+}
+
+.dark .text-gray-800 {
+  color: #f0fdf4 !important;
+}
+
+.dark .text-gray-700 {
+  color: #d1fae5 !important;
+}
+
+.dark .text-gray-600 {
+  color: #a7f3d0 !important;
+}
+
+.dark .text-gray-500 {
+  color: #6ee7b7 !important;
+}
+
+.dark .text-gray-400 {
+  color: #34d399 !important;
+}
+
+.dark .text-green-600 {
+  color: #86efac !important;
+}
+
+.dark .text-green-700 {
+  color: #4ade80 !important;
+}
+
+.dark .text-green-800 {
+  color: #22c55e !important;
+}
+
+.dark .text-green-100 {
+  color: #dcfce7 !important;
+}
+
+.dark .text-green-200 {
+  color: #bbf7d0 !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #166534 !important;
+}
+
+.dark .border-green-200 {
+  border-color: #16a34a !important;
+}
+
+.dark .shadow-xl,
+.dark .shadow-2xl,
+.dark .shadow-lg {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(16, 185, 129, 0.2);
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: #065f46 !important;
+}
+
+.dark .hover\:bg-gray-200:hover {
+  background-color: #047857 !important;
+}
+
+.dark .hover\:bg-gray-300:hover {
+  background-color: #059669 !important;
+}
+
+/* Gradient cards stay vibrant in dark mode */
+.dark .bg-gradient-to-br.from-blue-500,
+.dark .bg-gradient-to-br.from-orange-500,
+.dark .bg-gradient-to-br.from-purple-500,
+.dark .bg-gradient-to-br.from-red-500 {
+  /* Keep original gradients for accent cards */
+  filter: brightness(0.9);
+}
+
+/* Footer in dark mode - keep green gradient */
+.dark footer {
+  background: linear-gradient(to bottom right, #065f46, #064e3b, #047857) !important;
+}
+
 /* Custom animations */
 @keyframes fadeIn {
   from {
@@ -142,6 +286,10 @@ html {
   background: #f1f1f1;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #064e3b;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #10b981;
   border-radius: 4px;
@@ -149,6 +297,14 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #059669;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #34d399;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
 }
 
 /* Remove default focus outline and add custom */
@@ -165,6 +321,12 @@ select:focus {
   -webkit-backdrop-filter: blur(10px);
 }
 
+.dark .glass {
+  background: rgba(6, 78, 59, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
 /* Ensure body takes full height */
 body {
   margin: 0;
@@ -174,6 +336,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
@@ -188,6 +351,10 @@ button, a {
 /* Hover glow effect */
 .hover-glow:hover {
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.dark .hover-glow:hover {
+  box-shadow: 0 0 25px rgba(52, 211, 153, 0.6);
 }
 
 /* Stagger animations for children */
@@ -231,6 +398,27 @@ body {
 /* Improve input fields on mobile */
 input, select, textarea {
   font-size: 16px; /* Prevents zoom on iOS */
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #065f46;
+  color: #f0fdf4;
+  border-color: #10b981;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6ee7b7;
+  opacity: 0.7;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #34d399;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1);
 }
 
 /* Safe area for notched devices */

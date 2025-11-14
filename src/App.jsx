@@ -1,22 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Leaf, Calendar, BookOpen, Bug, TrendingUp, Menu, X, Sun, Cloud, Droplets, ThermometerSun, ChevronRight, Search, Plus, Bell, Settings, Home, Heart, Mail, Github, Twitter, Linkedin } from 'lucide-react';
+import Toaster, { showToast } from './components/ui/Toast';
+import { storage } from './utils/storage';
+import { SkeletonWeather, SkeletonAction, SkeletonFarmLog, SkeletonCropCard, SkeletonMonthCard, SkeletonGrid, SkeletonList } from './components/ui/SkeletonLoader';
+import { HomePageSEO, CropGuideSEO, CalendarSEO, TrackerSEO, PestSEO } from './components/SEO';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import OnboardingTour from './components/OnboardingTour';
 
 const SmartFarmerApp = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [scrollY, setScrollY] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedCrop, setSelectedCrop] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [showOnboarding, setShowOnboarding] = useState(true);
-  const [userLocation, setUserLocation] = useState('');
-  const [farmingType, setFarmingType] = useState('');
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    const prefs = storage.loadPrefs();
+    return !prefs;
+  });
+  const [userLocation, setUserLocation] = useState(() => {
+    const prefs = storage.loadPrefs();
+    return prefs?.location || '';
+  });
+  const [farmingType, setFarmingType] = useState(() => {
+    const prefs = storage.loadPrefs();
+    return prefs?.farmingType || '';
+  });
   const [showAddLogModal, setShowAddLogModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [farmLogs, setFarmLogs] = useState([
-    { crop: 'Maize', datePlanted: '2025-04-15', status: 'Growing', daysLeft: 45 },
-    { crop: 'Tomato', datePlanted: '2025-03-20', status: 'Flowering', daysLeft: 20 }
-  ]);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showTermsOfService, setShowTermsOfService] = useState(false);
+  const [showCookiePolicy, setShowCookiePolicy] = useState(false);
+  const [showWeatherUpdates, setShowWeatherUpdates] = useState(false);
+  const [showMarketPrices, setShowMarketPrices] = useState(false);
+  const [showFarmingTips, setShowFarmingTips] = useState(false);
+  const [showCommunityForum, setShowCommunityForum] = useState(false);
+  const [showHelpCenter, setShowHelpCenter] = useState(false);
+  const [showTour, setShowTour] = useState(() => {
+    return !localStorage.getItem('tourCompleted');
+  });
+  const [farmLogs, setFarmLogs] = useState(() => {
+    const savedLogs = storage.loadLogs();
+    return savedLogs.length > 0 ? savedLogs : [
+      { crop: 'Maize', datePlanted: '2025-04-15', status: 'Growing', daysLeft: 45 },
+      { crop: 'Tomato', datePlanted: '2025-03-20', status: 'Flowering', daysLeft: 20 }
+    ];
+  });
+  
   const [newLog, setNewLog] = useState({
     crop: '',
     datePlanted: '',
@@ -25,12 +57,10 @@ const SmartFarmerApp = () => {
     notes: ''
   });
   
-  // Pest diagnosis state
   const [selectedPestCrop, setSelectedPestCrop] = useState('');
   const [selectedSymptom, setSelectedSymptom] = useState('');
   const [pestSolution, setPestSolution] = useState(null);
 
-  // Notifications data
   const notifications = [
     { id: 1, type: 'reminder', title: 'Weeding Due', message: 'Time to weed your Maize farm', time: '2 hours ago', read: false },
     { id: 2, type: 'alert', title: 'Weather Alert', message: 'Heavy rain expected tomorrow', time: '5 hours ago', read: false },
@@ -38,13 +68,79 @@ const SmartFarmerApp = () => {
     { id: 4, type: 'info', title: 'Market Update', message: 'Maize prices increased by 15%', time: '2 days ago', read: true }
   ];
 
-  // Settings options
-  const [settings, setSettings] = useState({
-    notifications: true,
-    darkMode: false,
-    language: 'English',
-    units: 'Metric'
+  const [settings, setSettings] = useState(() => {
+    const savedSettings = storage.loadSettings();
+    return savedSettings || {
+      notifications: true,
+      darkMode: false,
+      language: 'English',
+      units: 'Metric'
+    };
   });
+
+  const [weatherData, setWeatherData] = useState({
+    temp: '28°C',
+    condition: 'Partly Cloudy',
+    humidity: '75%',
+    rainfall: '12mm',
+    loading: false
+  });
+
+  useEffect(() => {
+    storage.saveLogs(farmLogs);
+  }, [farmLogs]);
+
+  useEffect(() => {
+    if (userLocation && farmingType) {
+      storage.savePrefs({ location: userLocation, farmingType });
+    }
+  }, [userLocation, farmingType]);
+
+  useEffect(() => {
+    storage.saveSettings(settings);
+    
+    if (settings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [settings]);
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      if (!navigator.onLine) return;
+      setWeatherData(prev => ({ ...prev, loading: true }));
+
+      try {
+        setTimeout(() => {
+          const temps = ['25°C', '26°C', '27°C', '28°C', '29°C', '30°C'];
+          const conditions = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Light Rain'];
+          const humidities = ['70%', '72%', '75%', '78%', '80%'];
+          
+          setWeatherData({
+            temp: temps[Math.floor(Math.random() * temps.length)],
+            condition: conditions[Math.floor(Math.random() * conditions.length)],
+            humidity: humidities[Math.floor(Math.random() * humidities.length)],
+            rainfall: `${Math.floor(Math.random() * 20)}mm`,
+            loading: false
+          });
+        }, 1000);
+      } catch (error) {
+        console.error('Failed to fetch weather:', error);
+        setWeatherData(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchWeather();
+    const interval = setInterval(fetchWeather, 30 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleTourFinish = () => {
+    localStorage.setItem('tourCompleted', 'true');
+    setShowTour(false);
+    showToast.success('Welcome aboard! You\'re all set! 🎉');
+  };
 
   const pestDatabase = {
     'Maize': {
@@ -137,21 +233,36 @@ const SmartFarmerApp = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
   const crops = [
     { name: 'Maize', icon: '🌽', plantingMonths: ['April', 'May', 'June'], harvestTime: '3 months', yield: '3 tons/ha', soilType: 'Loamy' },
     { name: 'Rice', icon: '🌾', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '2.5 tons/ha', soilType: 'Clay' },
     { name: 'Cassava', icon: '🥔', plantingMonths: ['March', 'April', 'May'], harvestTime: '10 months', yield: '15 tons/ha', soilType: 'Sandy' },
     { name: 'Tomato', icon: '🍅', plantingMonths: ['March', 'April', 'September'], harvestTime: '2 months', yield: '8 tons/ha', soilType: 'Loamy' },
     { name: 'Pepper', icon: '🌶️', plantingMonths: ['April', 'May', 'June'], harvestTime: '3 months', yield: '4 tons/ha', soilType: 'Sandy loam' },
-    { name: 'Yam', icon: '🍠', plantingMonths: ['March', 'April'], harvestTime: '8 months', yield: '12 tons/ha', soilType: 'Loamy' }
+    { name: 'Yam', icon: '🍠', plantingMonths: ['March', 'April'], harvestTime: '8 months', yield: '12 tons/ha', soilType: 'Loamy' },
+    { name: 'Okra', icon: '🥒', plantingMonths: ['March', 'April', 'May', 'September'], harvestTime: '2 months', yield: '5 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Beans', icon: '🫘', plantingMonths: ['April', 'May', 'June'], harvestTime: '2.5 months', yield: '1.5 tons/ha', soilType: 'Loamy' },
+    { name: 'Groundnut', icon: '🥜', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '2 tons/ha', soilType: 'Sandy' },
+    { name: 'Sorghum', icon: '🌾', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '2.5 tons/ha', soilType: 'Loamy' },
+    { name: 'Millet', icon: '🌾', plantingMonths: ['June', 'July', 'August'], harvestTime: '3 months', yield: '1.5 tons/ha', soilType: 'Sandy' },
+    { name: 'Cowpea', icon: '🫘', plantingMonths: ['May', 'June', 'July', 'August'], harvestTime: '2.5 months', yield: '1.2 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Sweet Potato', icon: '🍠', plantingMonths: ['March', 'April', 'May'], harvestTime: '4 months', yield: '10 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Cocoyam', icon: '🥔', plantingMonths: ['March', 'April', 'May'], harvestTime: '7 months', yield: '8 tons/ha', soilType: 'Loamy' },
+    { name: 'Plantain', icon: '🍌', plantingMonths: ['March', 'April', 'May'], harvestTime: '10 months', yield: '15 tons/ha', soilType: 'Loamy' },
+    { name: 'Banana', icon: '🍌', plantingMonths: ['All year'], harvestTime: '9 months', yield: '20 tons/ha', soilType: 'Loamy' },
+    { name: 'Watermelon', icon: '🍉', plantingMonths: ['March', 'April', 'October', 'November'], harvestTime: '3 months', yield: '20 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Cucumber', icon: '🥒', plantingMonths: ['March', 'April', 'September', 'October'], harvestTime: '2 months', yield: '15 tons/ha', soilType: 'Loamy' },
+    { name: 'Cabbage', icon: '🥬', plantingMonths: ['September', 'October', 'November'], harvestTime: '3 months', yield: '40 tons/ha', soilType: 'Loamy' },
+    { name: 'Onion', icon: '🧅', plantingMonths: ['October', 'November', 'December'], harvestTime: '4 months', yield: '15 tons/ha', soilType: 'Sandy loam' },
   ];
-
-  const weatherData = {
-    temp: '28°C',
-    condition: 'Partly Cloudy',
-    humidity: '75%',
-    rainfall: '12mm'
-  };
 
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -163,49 +274,54 @@ const SmartFarmerApp = () => {
     crop.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle Add Log
   const handleAddLog = () => {
-    if (newLog.crop && newLog.datePlanted) {
-      const cropInfo = crops.find(c => c.name === newLog.crop);
-      const harvestMonths = parseInt(cropInfo?.harvestTime) || 3;
-      const daysLeft = harvestMonths * 30; // Approximate days
-      
-      setFarmLogs([...farmLogs, {
-        ...newLog,
-        status: 'Planted',
-        daysLeft: daysLeft
-      }]);
-      
-      setNewLog({
-        crop: '',
-        datePlanted: '',
-        seedQuantity: '',
-        fertilizer: '',
-        notes: ''
-      });
-      setShowAddLogModal(false);
+    if (!newLog.crop || !newLog.datePlanted) {
+      showToast.error('Please fill in required fields');
+      return;
     }
+
+    const cropInfo = crops.find(c => c.name === newLog.crop);
+    const harvestMonths = parseInt(cropInfo?.harvestTime) || 3;
+    const daysLeft = harvestMonths * 30;
+    
+    setFarmLogs([...farmLogs, {
+      crop: newLog.crop,
+      datePlanted: newLog.datePlanted,
+      seedQuantity: newLog.seedQuantity || '',
+      fertilizer: newLog.fertilizer || '',
+      notes: newLog.notes || '',
+      status: 'Planted',
+      daysLeft: daysLeft
+    }]);
+    
+    showToast.success(`${newLog.crop} log added successfully! 🌱`);
+    setNewLog({ crop: '', datePlanted: '', seedQuantity: '', fertilizer: '', notes: '' });
+    setShowAddLogModal(false);
   };
 
-  // Handle Pest Diagnosis
   const handleGetSolution = () => {
     if (selectedPestCrop && selectedSymptom) {
       const solution = pestDatabase[selectedPestCrop]?.[selectedSymptom];
       if (solution) {
         setPestSolution(solution);
+        showToast.success('Solution found! Check below for details 📋');
       } else {
         setPestSolution({
           cause: 'Information not available',
           solution: 'Please consult with a local agricultural extension officer',
           prevention: 'Practice good farm hygiene and regular monitoring'
         });
+        showToast.info('Limited information available for this symptom');
       }
+    } else {
+      showToast.error('Please select both crop and symptom');
     }
   };
-
   if (showOnboarding) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-4">
+        <Toaster />
+        <HomePageSEO />
         <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 animate-fadeIn">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center animate-bounce">
@@ -253,7 +369,13 @@ const SmartFarmerApp = () => {
             </div>
 
             <button
-              onClick={() => userLocation && farmingType && setShowOnboarding(false)}
+              onClick={() => {
+                if (userLocation && farmingType) {
+                  setShowOnboarding(false);
+                  storage.savePrefs({ location: userLocation, farmingType });
+                  showToast.success('Welcome to Smart Farmer! 🌱');
+                }
+              }}
               disabled={!userLocation || !farmingType}
               className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
             >
@@ -265,15 +387,437 @@ const SmartFarmerApp = () => {
     );
   }
 
+  if (showPrivacyPolicy) {
+    return <PrivacyPolicy onBack={() => setShowPrivacyPolicy(false)} />;
+  }
+
+  if (showTermsOfService) {
+    return <TermsOfService onBack={() => setShowTermsOfService(false)} />;
+  }
+
+  if (showCookiePolicy) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 md:py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <button 
+            onClick={() => setShowCookiePolicy(false)}
+            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+          >
+            <X className="w-5 h-5 mr-2" />
+            Back to App
+          </button>
+          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">Cookie Policy</h1>
+            <div className="prose max-w-none">
+              <p className="text-gray-700 leading-relaxed mb-4">
+                Smart Farmer uses minimal cookies and local storage to provide you with the best experience.
+              </p>
+              <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">What We Store</h2>
+              <ul className="text-gray-700 space-y-2 list-disc ml-6">
+                <li>Your farm logs and preferences (stored locally on your device)</li>
+                <li>App settings and display preferences</li>
+                <li>Tour completion status</li>
+              </ul>
+              <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Third-Party Cookies</h2>
+              <p className="text-gray-700 leading-relaxed">
+                We do not use third-party cookies for tracking or advertising. All data stays on your device.
+              </p>
+              <div className="bg-green-50 p-6 rounded-xl mt-6">
+                <p className="text-sm text-green-800 font-semibold">
+                  ✅ You can clear all stored data at any time by signing out or clearing your browser data.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showWeatherUpdates) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 md:py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <button 
+            onClick={() => setShowWeatherUpdates(false)}
+            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+          >
+            <X className="w-5 h-5 mr-2" />
+            Back to App
+          </button>
+          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">Weather Updates</h1>
+            <p className="text-gray-600 mb-8">Stay informed about weather conditions for better farming decisions</p>
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-2xl text-white">
+                <h3 className="text-xl font-bold mb-4">7-Day Forecast</h3>
+                <div className="space-y-3">
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, idx) => (
+                    <div key={idx} className="flex justify-between items-center bg-white/10 p-3 rounded-lg">
+                      <span>{day}</span>
+                      <div className="flex items-center space-x-2">
+                        <Cloud className="w-5 h-5" />
+                        <span>{25 + idx}°C</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="bg-orange-50 p-6 rounded-2xl">
+                  <h3 className="text-xl font-bold text-gray-800 mb-3">Weather Alerts</h3>
+                  <div className="space-y-3">
+                    <div className="bg-white p-4 rounded-lg border-l-4 border-orange-500">
+                      <p className="font-semibold text-gray-800">Heavy Rain Expected</p>
+                      <p className="text-sm text-gray-600">Tomorrow afternoon - Prepare drainage</p>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border-l-4 border-yellow-500">
+                      <p className="font-semibold text-gray-800">High Temperature</p>
+                      <p className="text-sm text-gray-600">Weekend - Increase irrigation</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-green-50 p-6 rounded-2xl">
+                  <h3 className="text-xl font-bold text-gray-800 mb-3">Farming Recommendations</h3>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li>✅ Good time for planting this week</li>
+                    <li>✅ Soil moisture levels optimal</li>
+                    <li>⚠️ Plan for rain harvesting tomorrow</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showMarketPrices) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 md:py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <button 
+            onClick={() => setShowMarketPrices(false)}
+            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+          >
+            <X className="w-5 h-5 mr-2" />
+            Back to App
+          </button>
+          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">Market Prices</h1>
+            <p className="text-gray-600 mb-8">Current market prices for major crops</p>
+            
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                { crop: 'Maize', icon: '🌽', price: '₦180', unit: 'per kg', trend: 'up', change: '+15%' },
+                { crop: 'Rice', icon: '🌾', price: '₦350', unit: 'per kg', trend: 'up', change: '+8%' },
+                { crop: 'Tomato', icon: '🍅', price: '₦250', unit: 'per kg', trend: 'down', change: '-5%' },
+                { crop: 'Pepper', icon: '🌶️', price: '₦400', unit: 'per kg', trend: 'up', change: '+12%' },
+                { crop: 'Yam', icon: '🍠', price: '₦200', unit: 'per kg', trend: 'stable', change: '0%' },
+                { crop: 'Beans', icon: '🫘', price: '₦280', unit: 'per kg', trend: 'up', change: '+6%' },
+              ].map((item, idx) => (
+                <div key={idx} className="bg-white border-2 border-gray-200 p-6 rounded-2xl hover:shadow-lg transition-all">
+                  <div className="text-4xl mb-3">{item.icon}</div>
+                  <h3 className="font-bold text-gray-800 text-lg mb-2">{item.crop}</h3>
+                  <div className="flex items-baseline space-x-2 mb-2">
+                    <span className="text-2xl font-bold text-green-600">{item.price}</span>
+                    <span className="text-sm text-gray-600">{item.unit}</span>
+                  </div>
+                  <div className={`flex items-center space-x-1 text-sm font-semibold ${
+                    item.trend === 'up' ? 'text-green-600' : 
+                    item.trend === 'down' ? 'text-red-600' : 
+                    'text-gray-600'
+                  }`}>
+                    <TrendingUp className={`w-4 h-4 ${item.trend === 'down' ? 'rotate-180' : ''}`} />
+                    <span>{item.change}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-8 bg-blue-50 p-6 rounded-2xl">
+              <h3 className="font-bold text-gray-800 mb-3">💡 Market Tips</h3>
+              <ul className="space-y-2 text-sm text-gray-700">
+                <li>• Maize prices expected to remain high due to seasonal demand</li>
+                <li>• Best time to sell pepper is within the next 2 weeks</li>
+                <li>• Rice imports may affect local prices next month</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showFarmingTips) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 md:py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <button 
+            onClick={() => setShowFarmingTips(false)}
+            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+          >
+            <X className="w-5 h-5 mr-2" />
+            Back to App
+          </button>
+          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">Farming Tips</h1>
+            <p className="text-gray-600 mb-8">Expert advice for successful farming</p>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                {
+                  title: 'Soil Preparation',
+                  icon: '🌱',
+                  tips: [
+                    'Test soil pH before planting',
+                    'Add organic matter to improve fertility',
+                    'Ensure proper drainage',
+                    'Remove weeds and debris'
+                  ]
+                },
+                {
+                  title: 'Planting Techniques',
+                  icon: '🌾',
+                  tips: [
+                    'Plant at optimal spacing',
+                    'Use quality seeds',
+                    'Plant at right depth',
+                    'Water immediately after planting'
+                  ]
+                },
+                {
+                  title: 'Pest Management',
+                  icon: '🐛',
+                  tips: [
+                    'Regular field inspection',
+                    'Use integrated pest management',
+                    'Apply organic pesticides when possible',
+                    'Practice crop rotation'
+                  ]
+                },
+                {
+                  title: 'Water Management',
+                  icon: '💧',
+                  tips: [
+                    'Water early morning or evening',
+                    'Use drip irrigation for efficiency',
+                    'Mulch to retain moisture',
+                    'Monitor soil moisture levels'
+                  ]
+                },
+                {
+                  title: 'Fertilization',
+                  icon: '🌿',
+                  tips: [
+                    'Apply fertilizer based on soil test',
+                    'Use balanced NPK ratios',
+                    'Split applications for better uptake',
+                    'Combine organic and inorganic fertilizers'
+                  ]
+                },
+                {
+                  title: 'Harvesting',
+                  icon: '🧺',
+                  tips: [
+                    'Harvest at right maturity',
+                    'Use clean tools',
+                    'Handle produce carefully',
+                    'Store properly to reduce losses'
+                  ]
+                }
+              ].map((section, idx) => (
+                <div key={idx} className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border-2 border-green-200">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <span className="text-4xl">{section.icon}</span>
+                    <h3 className="text-xl font-bold text-gray-800">{section.title}</h3>
+                  </div>
+                  <ul className="space-y-2">
+                    {section.tips.map((tip, i) => (
+                      <li key={i} className="flex items-start space-x-2 text-sm text-gray-700">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showCommunityForum) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 md:py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <button 
+            onClick={() => setShowCommunityForum(false)}
+            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+          >
+            <X className="w-5 h-5 mr-2" />
+            Back to App
+          </button>
+          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">Community Forum</h1>
+            <p className="text-gray-600 mb-8">Connect with fellow farmers and share experiences</p>
+            
+            <div className="space-y-4">
+              {[
+                {
+                  author: 'Emeka Okafor',
+                  topic: 'Best practices for maize farming in rainy season',
+                  replies: 23,
+                  time: '2 hours ago',
+                  category: 'Crop Management'
+                },
+                {
+                  author: 'Fatima Abubakar',
+                  topic: 'Dealing with armyworm infestation',
+                  replies: 15,
+                  time: '5 hours ago',
+                  category: 'Pest Control'
+                },
+                {
+                  author: 'Chioma Nwankwo',
+                  topic: 'Where to get quality tomato seedlings?',
+                  replies: 8,
+                  time: '1 day ago',
+                  category: 'Resources'
+                },
+                {
+                  author: 'Ibrahim Yusuf',
+                  topic: 'Organic fertilizer alternatives',
+                  replies: 31,
+                  time: '2 days ago',
+                  category: 'Soil Health'
+                },
+                {
+                  author: 'Grace Adebayo',
+                  topic: 'Market prices for pepper this week',
+                  replies: 12,
+                  time: '3 days ago',
+                  category: 'Market Info'
+                }
+              ].map((post, idx) => (
+                <div key={idx} className="bg-white border-2 border-gray-200 p-6 rounded-2xl hover:shadow-lg transition-all">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                        {post.category}
+                      </span>
+                      <h3 className="font-bold text-gray-800 text-lg mt-2">{post.topic}</h3>
+                      <p className="text-sm text-gray-600 mt-1">Posted by {post.author}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <span>💬 {post.replies} replies</span>
+                    <span>•</span>
+                    <span>{post.time}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <button className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all">
+              Start a New Discussion
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showHelpCenter) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 md:py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <button 
+            onClick={() => setShowHelpCenter(false)}
+            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+          >
+            <X className="w-5 h-5 mr-2" />
+            Back to App
+          </button>
+          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">Help Center</h1>
+            <p className="text-gray-600 mb-8">Find answers to common questions</p>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Getting Started</h3>
+                <div className="space-y-3">
+                  {[
+                    'How to set up your profile',
+                    'Adding your first farm log',
+                    'Understanding the crop guide',
+                    'Using the planting calendar'
+                  ].map((item, idx) => (
+                    <button key={idx} className="w-full text-left p-4 bg-green-50 hover:bg-green-100 rounded-xl transition-all">
+                      <p className="font-semibold text-gray-800">{item}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Features</h3>
+                <div className="space-y-3">
+                  {[
+                    'Weather updates explained',
+                    'Tracking your crops',
+                    'Pest diagnosis tool',
+                    'Market price information'
+                  ].map((item, idx) => (
+                    <button key={idx} className="w-full text-left p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all">
+                      <p className="font-semibold text-gray-800">{item}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-8 bg-gradient-to-br from-green-500 to-emerald-600 p-8 rounded-2xl text-white">
+              <h3 className="text-2xl font-bold mb-4">Still Need Help?</h3>
+              <p className="mb-6">Our support team is here to assist you</p>
+              <div className="flex flex-wrap gap-4">
+                <button className="px-6 py-3 bg-white text-green-600 rounded-xl font-semibold hover:shadow-lg transition-all">
+                  📧 Email Support
+                </button>
+                <button className="px-6 py-3 bg-white/10 backdrop-blur text-white rounded-xl font-semibold hover:bg-white/20 transition-all">
+                  💬 Live Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
-      {/* Combined Header with Navigation */}
+      <OnboardingTour run={showTour && !showOnboarding} onFinish={handleTourFinish} />
+      
+      {activeTab === 'home' && <HomePageSEO />}
+      {activeTab === 'guide' && <CropGuideSEO />}
+      {activeTab === 'calendar' && <CalendarSEO />}
+      {activeTab === 'tracker' && <TrackerSEO />}
+      {activeTab === 'pest' && <PestSEO />}
+      
+      <Toaster />
+      
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrollY > 20 ? 'bg-white/80 backdrop-blur-lg shadow-lg' : 'bg-white shadow-md'
       }`}>
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            {/* Logo Section */}
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
                 <Leaf className="w-6 h-6 text-white" />
@@ -284,7 +828,6 @@ const SmartFarmerApp = () => {
               </div>
             </div>
 
-            {/* Navigation Tabs */}
             <nav className="hidden md:flex items-center space-x-6">
               {[
                 { name: 'Home', icon: Home, tab: 'home' },
@@ -308,7 +851,6 @@ const SmartFarmerApp = () => {
               ))}
             </nav>
 
-            {/* Mobile Navigation - Bottom Tabs */}
             <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50">
               <div className="flex justify-around py-3">
                 {[
@@ -332,11 +874,10 @@ const SmartFarmerApp = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex items-center space-x-3">
               <button 
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 hover:bg-gray-100 rounded-full transition-all"
+                className="notification-btn p-2 hover:bg-gray-100 rounded-full transition-all relative"
               >
                 <Bell className="w-5 h-5 text-gray-700" />
                 {notifications.filter(n => !n.read).length > 0 && (
@@ -345,7 +886,7 @@ const SmartFarmerApp = () => {
               </button>
               <button 
                 onClick={() => setShowSettings(!showSettings)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-all"
+                className="settings-btn p-2 hover:bg-gray-100 rounded-full transition-all"
               >
                 <Settings className="w-5 h-5 text-gray-700" />
               </button>
@@ -354,11 +895,9 @@ const SmartFarmerApp = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="pt-20 pb-8 md:pb-8 px-4 max-w-7xl mx-auto">
         {activeTab === 'home' && (
           <div className="space-y-6 animate-fadeIn">
-            {/* Weather Card with Modern Design */}
             <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-2xl transform hover:scale-[1.02] transition-all">
               <div className="flex items-center justify-between mb-4">
                 <div>
@@ -380,7 +919,6 @@ const SmartFarmerApp = () => {
               </div>
             </div>
 
-            {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-4">
               {[
                 { name: 'Crop Guide', icon: BookOpen, tab: 'guide', color: 'from-green-500 to-emerald-600' },
@@ -399,14 +937,18 @@ const SmartFarmerApp = () => {
               ))}
             </div>
 
-            {/* Active Farm Logs */}
             <div className="bg-white rounded-3xl p-6 shadow-xl">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-gray-800">Active Crops</h3>
-                <button className="text-green-600 text-sm font-semibold">View All</button>
+                <button 
+                  onClick={() => setActiveTab('tracker')}
+                  className="text-green-600 text-sm font-semibold"
+                >
+                  View All
+                </button>
               </div>
               <div className="space-y-3">
-                {farmLogs.map((log, idx) => (
+                {farmLogs.slice(0, 3).map((log, idx) => (
                   <div key={idx} className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl hover:shadow-md transition-all">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
@@ -435,7 +977,6 @@ const SmartFarmerApp = () => {
               <p className="text-gray-600">Discover the best crops for your region</p>
             </div>
 
-            {/* Search Bar */}
             <div className="relative mb-6">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -447,7 +988,6 @@ const SmartFarmerApp = () => {
               />
             </div>
 
-            {/* Crop Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {filteredCrops.map((crop, idx) => (
                 <button
@@ -466,7 +1006,6 @@ const SmartFarmerApp = () => {
               ))}
             </div>
 
-            {/* Crop Detail Modal */}
             {selectedCrop && (
               <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedCrop(null)}>
                 <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -513,7 +1052,10 @@ const SmartFarmerApp = () => {
               <p className="text-sm sm:text-base text-gray-600">Plan your farming activities</p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {isLoading ? (
+              <SkeletonGrid count={12} Component={SkeletonMonthCard} columns={4} />
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {months.map((month, idx) => {
                 const recommendedCrops = getRecommendedCrops(month);
                 return (
@@ -538,6 +1080,7 @@ const SmartFarmerApp = () => {
                 );
               })}
             </div>
+            )}
 
             {selectedMonth && (
               <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedMonth(null)}>
@@ -671,7 +1214,6 @@ const SmartFarmerApp = () => {
                   Get Solution
                 </button>
 
-                {/* Solution Display */}
                 {pestSolution && (
                   <div className="mt-6 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border-2 border-green-200 animate-scaleIn">
                     <div className="flex items-start space-x-3 mb-4">
@@ -722,11 +1264,9 @@ const SmartFarmerApp = () => {
         )}
       </main>
 
-      {/* Professional Footer */}
       <footer className="bg-gradient-to-br from-green-800 via-emerald-900 to-teal-900 text-white mt-20">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            {/* About Section */}
             <div className="animate-slideInLeft">
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
@@ -739,52 +1279,93 @@ const SmartFarmerApp = () => {
               </p>
             </div>
 
-            {/* Quick Links */}
             <div className="animate-slideInLeft" style={{animationDelay: '0.1s'}}>
               <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2">
-                {['Home', 'Crop Guide', 'Calendar', 'Farm Tracker', 'Pest Tips'].map((link) => (
-                  <li key={link}>
-                    <button className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block">
-                      {link}
+                {[
+                  { name: 'Home', tab: 'home' },
+                  { name: 'Crop Guide', tab: 'guide' },
+                  { name: 'Calendar', tab: 'calendar' },
+                  { name: 'Farm Tracker', tab: 'tracker' },
+                  { name: 'Pest Tips', tab: 'pest' }
+                ].map((link) => (
+                  <li key={link.name}>
+                    <button 
+                      onClick={() => setActiveTab(link.tab)}
+                      className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    >
+                      {link.name}
                     </button>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Resources */}
             <div className="animate-slideInLeft" style={{animationDelay: '0.2s'}}>
               <h4 className="text-lg font-semibold mb-4">Resources</h4>
               <ul className="space-y-2">
-                {['Weather Updates', 'Market Prices', 'Farming Tips', 'Community Forum', 'Help Center'].map((resource) => (
-                  <li key={resource}>
-                    <button className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block">
-                      {resource}
-                    </button>
-                  </li>
-                ))}
+                <li>
+                  <button 
+                    onClick={() => setShowWeatherUpdates(true)}
+                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                  >
+                    Weather Updates
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => setShowMarketPrices(true)}
+                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                  >
+                    Market Prices
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => setShowFarmingTips(true)}
+                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                  >
+                    Farming Tips
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => setShowCommunityForum(true)}
+                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                  >
+                    Community Forum
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => setShowHelpCenter(true)}
+                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                  >
+                    Help Center
+                  </button>
+                </li>
               </ul>
             </div>
 
-            {/* Contact */}
             <div className="animate-slideInLeft" style={{animationDelay: '0.3s'}}>
               <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
               <div className="space-y-3 mb-4">
-                <a href="mailto:info@smartfarmer.ng" className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors text-sm group">
+                <a href="mailto:smartfarmer121@gmail.com" className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors text-sm group">
                   <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span>info@smartfarmer.ng</span>
+                  <span>smartfarmer121@gmail.com</span>
                 </a>
               </div>
               <div className="flex space-x-3">
                 {[
-                  { icon: Twitter, href: '#' },
-                  { icon: Linkedin, href: '#' },
-                  { icon: Github, href: '#' }
+                  { icon: Twitter, href: 'https://x.com/smartfarmer121' },
+                  { icon: Linkedin, href: 'https://linkedin.com/smartfarmer' },
+                  { icon: Github, href: 'https://github.com/bishopkbb/smart-farmer' }
                 ].map((social, idx) => (
                   <a
                     key={idx}
                     href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all transform hover:scale-110 hover:-translate-y-1"
                   >
                     <social.icon className="w-5 h-5" />
@@ -794,23 +1375,36 @@ const SmartFarmerApp = () => {
             </div>
           </div>
 
-          {/* Bottom Bar */}
           <div className="border-t border-green-700 pt-8 mt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <p className="text-green-100 text-sm text-center md:text-left">
                 © 2025 Smart Farmer. All rights reserved. Built with <Heart className="w-4 h-4 inline text-red-400 animate-pulse" /> for Nigerian farmers.
               </p>
               <div className="flex flex-wrap justify-center gap-4 text-sm text-green-100">
-                <button className="hover:text-white transition-colors">Privacy Policy</button>
+                <button 
+                  onClick={() => setShowPrivacyPolicy(true)}
+                  className="hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </button>
                 <span>•</span>
-                <button className="hover:text-white transition-colors">Terms of Service</button>
+                <button 
+                  onClick={() => setShowTermsOfService(true)}
+                  className="hover:text-white transition-colors"
+                >
+                  Terms of Service
+                </button>
                 <span>•</span>
-                <button className="hover:text-white transition-colors">Cookie Policy</button>
+                <button 
+                  onClick={() => setShowCookiePolicy(true)}
+                  className="hover:text-white transition-colors"
+                >
+                  Cookie Policy
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Credits */}
           <div className="mt-8 text-center">
             <p className="text-green-200 text-xs">
               Developed by <span className="font-semibold">Ajibade Tosin Francis, Omoyeni Naomi, Sandra Ogechi Ezeugonna & Tolough Nelson Aondongu</span>
@@ -819,10 +1413,8 @@ const SmartFarmerApp = () => {
         </div>
       </footer>
 
-      {/* Mobile Bottom Padding */}
       <div className="md:hidden h-20"></div>
 
-      {/* Notifications Panel */}
       {showNotifications && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowNotifications(false)}>
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -875,7 +1467,6 @@ const SmartFarmerApp = () => {
         </div>
       )}
 
-      {/* Settings Panel */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowSettings(false)}>
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
@@ -890,7 +1481,6 @@ const SmartFarmerApp = () => {
             </div>
 
             <div className="space-y-6">
-              {/* Profile Section */}
               <div className="pb-6 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Profile</h3>
                 <div className="space-y-3">
@@ -905,7 +1495,6 @@ const SmartFarmerApp = () => {
                 </div>
               </div>
 
-              {/* Preferences */}
               <div className="pb-6 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Preferences</h3>
                 <div className="space-y-4">
@@ -971,21 +1560,40 @@ const SmartFarmerApp = () => {
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="space-y-3">
-                <button className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+                <button 
+                  onClick={() => {
+                    storage.saveSettings(settings);
+                    showToast.success('Settings saved successfully! ✅');
+                    setShowSettings(false);
+                  }}
+                  className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                >
                   Save Changes
                 </button>
                 <button 
                   onClick={() => {
+                    storage.clearAll();
                     setShowOnboarding(true);
                     setShowSettings(false);
+                    showToast.info('Returning to onboarding...');
                   }}
                   className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
                 >
                   Change Region
                 </button>
-                <button className="w-full py-3 text-red-600 font-semibold hover:bg-red-50 rounded-xl transition-all">
+                <button 
+                  onClick={() => {
+                    storage.clearAll();
+                    showToast.success('Signed out successfully. See you soon! 👋');
+                    setTimeout(() => {
+                      setShowOnboarding(true);
+                      setShowSettings(false);
+                      window.location.reload();
+                    }, 1000);
+                  }}
+                  className="w-full py-3 text-red-600 font-semibold hover:bg-red-50 rounded-xl transition-all"
+                >
                   Sign Out
                 </button>
               </div>
@@ -994,7 +1602,6 @@ const SmartFarmerApp = () => {
         </div>
       )}
 
-      {/* Add Log Modal */}
       {showAddLogModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowAddLogModal(false)}>
           <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
