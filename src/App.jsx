@@ -12,6 +12,7 @@ import AIPestDetection from './components/AIPestDetection';
 import { livestockTypes } from './data/livestock';
 import { mixedFarmingSystems, integratedPractices, seasonalPlanning } from './data/mixedFarming';
 import { useT } from './context/TranslationContext';
+import { weatherService } from './services/weatherService';
 
 const SmartFarmerApp = () => {
   const { t } = useT();
@@ -90,10 +91,14 @@ const SmartFarmerApp = () => {
   const [weatherData, setWeatherData] = useState({
     temp: '28°C',
     condition: 'Partly Cloudy',
+    icon: '⛅',
     humidity: '75%',
     rainfall: '12mm',
-    loading: false
+    windSpeed: '10 km/h',
+    feelsLike: '28°C',
+    loading: true
   });
+  const [forecastData, setForecastData] = useState([]);
 
   useEffect(() => {
     storage.saveLogs(farmLogs);
@@ -117,33 +122,39 @@ const SmartFarmerApp = () => {
 
   useEffect(() => {
     const fetchWeather = async () => {
-      if (!navigator.onLine) return;
+      if (!navigator.onLine) {
+        setWeatherData(prev => ({ ...prev, loading: false }));
+        return;
+      }
+
       setWeatherData(prev => ({ ...prev, loading: true }));
 
       try {
-        setTimeout(() => {
-          const temps = ['25°C', '26°C', '27°C', '28°C', '29°C', '30°C'];
-          const conditions = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Light Rain'];
-          const humidities = ['70%', '72%', '75%', '78%', '80%'];
+        if (userLocation) {
+          const [current, forecast] = await Promise.all([
+            weatherService.getCurrentWeather(userLocation),
+            weatherService.getForecast(userLocation)
+          ]);
           
-          setWeatherData({
-            temp: temps[Math.floor(Math.random() * temps.length)],
-            condition: conditions[Math.floor(Math.random() * conditions.length)],
-            humidity: humidities[Math.floor(Math.random() * humidities.length)],
-            rainfall: `${Math.floor(Math.random() * 20)}mm`,
-            loading: false
-          });
-        }, 1000);
+          setWeatherData(current);
+          setForecastData(forecast);
+        } else {
+          const mockData = weatherService.getMockWeather();
+          setWeatherData(mockData);
+          setForecastData(weatherService.getMockForecast());
+        }
       } catch (error) {
         console.error('Failed to fetch weather:', error);
-        setWeatherData(prev => ({ ...prev, loading: false }));
+        const mockData = weatherService.getMockWeather();
+        setWeatherData(mockData);
+        setForecastData(weatherService.getMockForecast());
       }
     };
 
     fetchWeather();
-    const interval = setInterval(fetchWeather, 30 * 60 * 1000);
+    const interval = setInterval(fetchWeather, 30 * 60 * 1000); // Update every 30 minutes
     return () => clearInterval(interval);
-  }, []);
+  }, [userLocation]);
 
   const handleTourFinish = () => {
     localStorage.setItem('tourCompleted', 'true');
@@ -328,16 +339,16 @@ const SmartFarmerApp = () => {
   };
   if (showOnboarding) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
         <Toaster />
         <HomePageSEO />
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 animate-fadeIn">
+        <div className="max-w-md w-full bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border-2 border-amber-200 p-8 animate-fadeIn">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center animate-bounce">
+            <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl mx-auto mb-4 flex items-center justify-center animate-bounce shadow-lg">
               <Leaf className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('onboarding.title')}</h1>
-            <p className="text-gray-600">{t('onboarding.subtitle')}</p>
+            <h1 className="text-3xl font-bold text-amber-900 mb-2">{t('onboarding.title')}</h1>
+            <p className="text-amber-700">{t('onboarding.subtitle')}</p>
           </div>
 
           <div className="space-y-6">
@@ -371,8 +382,8 @@ const SmartFarmerApp = () => {
                     onClick={() => setFarmingType(type.key)}
                     className={`py-3 rounded-xl font-medium transition-all ${
                       farmingType === type.key
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg scale-105'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg scale-105'
+                        : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border-2 border-amber-200'
                     }`}
                   >
                     {type.label}
@@ -390,7 +401,7 @@ const SmartFarmerApp = () => {
                 }
               }}
               disabled={!userLocation || !farmingType}
-              className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+              className="w-full py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
             >
               {t('common.getStarted')}
             </button>
@@ -414,7 +425,7 @@ const SmartFarmerApp = () => {
         <div className="max-w-4xl mx-auto">
           <button 
             onClick={() => setShowCookiePolicy(false)}
-            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+            className="flex items-center text-amber-600 hover:text-amber-700 mb-6 font-semibold transition-all"
           >
             <X className="w-5 h-5 mr-2" />
             Back to App
@@ -453,7 +464,7 @@ const SmartFarmerApp = () => {
         <div className="max-w-6xl mx-auto">
           <button 
             onClick={() => setShowWeatherUpdates(false)}
-            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+            className="flex items-center text-amber-600 hover:text-amber-700 mb-6 font-semibold transition-all"
           >
             <X className="w-5 h-5 mr-2" />
             Back to App
@@ -463,15 +474,23 @@ const SmartFarmerApp = () => {
             <p className="text-gray-600 mb-8">{t('weather.subtitle')}</p>
             
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-2xl text-white">
-                <h3 className="text-xl font-bold mb-4">7-Day Forecast</h3>
+              <div className="bg-gradient-to-br from-amber-100 to-orange-100 p-6 rounded-2xl border-2 border-amber-200">
+                <h3 className="text-xl font-bold mb-4 text-amber-900">{t('weather.forecast')}</h3>
                 <div className="space-y-3">
-                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, idx) => (
-                    <div key={idx} className="flex justify-between items-center bg-white/10 p-3 rounded-lg">
-                      <span>{day}</span>
+                  {forecastData.length > 0 ? forecastData.map((day, idx) => (
+                    <div key={idx} className="flex justify-between items-center bg-white/70 p-3 rounded-xl border border-amber-200/50">
+                      <span className="font-medium text-amber-900">{day.day}</span>
                       <div className="flex items-center space-x-2">
-                        <Cloud className="w-5 h-5" />
-                        <span>{25 + idx}°C</span>
+                        <span className="text-xl">{day.icon}</span>
+                        <span className="font-semibold text-amber-800">{day.temp}</span>
+                      </div>
+                    </div>
+                  )) : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, idx) => (
+                    <div key={idx} className="flex justify-between items-center bg-white/70 p-3 rounded-xl border border-amber-200/50">
+                      <span className="font-medium text-amber-900">{day}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xl">⛅</span>
+                        <span className="font-semibold text-amber-800">{25 + idx}°C</span>
                       </div>
                     </div>
                   ))}
@@ -515,7 +534,7 @@ const SmartFarmerApp = () => {
         <div className="max-w-6xl mx-auto">
           <button 
             onClick={() => setShowMarketPrices(false)}
-            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+            className="flex items-center text-amber-600 hover:text-amber-700 mb-6 font-semibold transition-all"
           >
             <X className="w-5 h-5 mr-2" />
             Back to App
@@ -572,7 +591,7 @@ const SmartFarmerApp = () => {
         <div className="max-w-6xl mx-auto">
           <button 
             onClick={() => setShowFarmingTips(false)}
-            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+            className="flex items-center text-amber-600 hover:text-amber-700 mb-6 font-semibold transition-all"
           >
             <X className="w-5 h-5 mr-2" />
             Back to App
@@ -672,7 +691,7 @@ const SmartFarmerApp = () => {
         <div className="max-w-6xl mx-auto">
           <button 
             onClick={() => setShowCommunityForum(false)}
-            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+            className="flex items-center text-amber-600 hover:text-amber-700 mb-6 font-semibold transition-all"
           >
             <X className="w-5 h-5 mr-2" />
             Back to App
@@ -753,7 +772,7 @@ const SmartFarmerApp = () => {
         <div className="max-w-6xl mx-auto">
           <button 
             onClick={() => setShowHelpCenter(false)}
-            className="flex items-center text-green-600 hover:text-green-700 mb-6 font-semibold transition-all"
+            className="flex items-center text-amber-600 hover:text-amber-700 mb-6 font-semibold transition-all"
           >
             <X className="w-5 h-5 mr-2" />
             Back to App
@@ -815,7 +834,7 @@ const SmartFarmerApp = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50/30 to-yellow-50">
       <OnboardingTour run={showTour && !showOnboarding} onFinish={handleTourFinish} />
       
       {activeTab === 'home' && <HomePageSEO />}
@@ -827,17 +846,17 @@ const SmartFarmerApp = () => {
       <Toaster />
       
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/80 backdrop-blur-lg shadow-lg' : 'bg-white shadow-md'
+        scrollY > 20 ? 'bg-amber-50/95 backdrop-blur-lg shadow-lg border-b border-amber-100' : 'bg-amber-50/90 shadow-sm border-b border-amber-100'
       }`}>
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                <Leaf className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-md">
+                <Leaf className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-800">Smart Farmer</h1>
-                <p className="text-xs text-gray-600">{userLocation ? userLocation.replace(/^\w/, c => c.toUpperCase()) + ' ' + t('settings.region') : ''}</p>
+                <h1 className="text-lg font-bold text-amber-900">Smart Farmer</h1>
+                <p className="text-xs text-amber-700">{userLocation ? userLocation.replace(/^\w/, c => c.toUpperCase()) + ' ' + t('settings.region') : ''}</p>
               </div>
             </div>
 
@@ -858,10 +877,10 @@ const SmartFarmerApp = () => {
                 <button
                   key={item.tab}
                   onClick={() => setActiveTab(item.tab)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all ${
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all ${
                     activeTab === item.tab 
-                      ? 'bg-green-100 text-green-600 font-semibold' 
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-amber-200 text-amber-900 font-semibold shadow-sm' 
+                      : 'text-amber-800 hover:bg-amber-100'
                   }`}
                 >
                   <item.icon className="w-5 h-5" />
@@ -870,7 +889,7 @@ const SmartFarmerApp = () => {
               ))}
             </nav>
 
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-amber-50 border-t-2 border-amber-200 shadow-2xl z-50">
               <div className="flex justify-around py-3">
                 {[
                   { name: 'Home', icon: Home, tab: 'home' },
@@ -889,7 +908,7 @@ const SmartFarmerApp = () => {
                     key={item.tab}
                     onClick={() => setActiveTab(item.tab)}
                     className={`flex flex-col items-center space-y-1 transition-all ${
-                      activeTab === item.tab ? 'text-green-600' : 'text-gray-500'
+                      activeTab === item.tab ? 'text-amber-700' : 'text-amber-600'
                     }`}
                   >
                     <item.icon className={`w-6 h-6 ${activeTab === item.tab ? 'scale-110' : ''} transition-transform`} />
@@ -902,96 +921,133 @@ const SmartFarmerApp = () => {
             <div className="flex items-center space-x-3">
               <button 
                 onClick={() => setShowNotifications(!showNotifications)}
-                className="notification-btn p-2 hover:bg-gray-100 rounded-full transition-all relative"
+                className="notification-btn p-2 hover:bg-amber-100 rounded-full transition-all relative"
               >
-                <Bell className="w-5 h-5 text-gray-700" />
+                <Bell className="w-5 h-5 text-amber-800" />
                 {notifications.filter(n => !n.read).length > 0 && (
                   <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
                 )}
               </button>
               <button 
                 onClick={() => setShowSettings(!showSettings)}
-                className="settings-btn p-2 hover:bg-gray-100 rounded-full transition-all"
+                className="settings-btn p-2 hover:bg-amber-100 rounded-full transition-all"
               >
-                <Settings className="w-5 h-5 text-gray-700" />
+                <Settings className="w-5 h-5 text-amber-800" />
               </button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="pt-20 pb-8 md:pb-8 px-4 max-w-7xl mx-auto">
+      <main className="pt-20 pb-8 md:pb-8 px-4 max-w-7xl mx-auto bg-gradient-to-b from-amber-50/30 to-white min-h-screen">
         {activeTab === 'home' && (
           <div className="space-y-6 animate-fadeIn">
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-2xl transform hover:scale-[1.02] transition-all">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-sm opacity-90">{t('home.todaysWeather')}</p>
-                  <h2 className="text-4xl font-bold">{weatherData.temp}</h2>
-                  <p className="text-sm opacity-90 mt-1">{weatherData.condition}</p>
+            {/* Weather Card - Warmer, more natural design */}
+            <div className="bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-50 rounded-3xl p-6 md:p-8 shadow-lg border-2 border-amber-200/50 transform hover:shadow-xl transition-all">
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex-1">
+                  <p className="text-sm text-amber-800 font-medium mb-2">{t('home.todaysWeather')}</p>
+                  <div className="flex items-baseline space-x-3 mb-2">
+                    <span className="text-5xl md:text-6xl font-bold text-amber-900">{weatherData.temp}</span>
+                    <span className="text-4xl">{weatherData.icon || '⛅'}</span>
+                  </div>
+                  <p className="text-lg text-amber-700 font-medium">{weatherData.condition}</p>
+                  {weatherData.feelsLike && (
+                    <p className="text-sm text-amber-600 mt-1">Feels like {weatherData.feelsLike}</p>
+                  )}
                 </div>
-                <Cloud className="w-16 h-16 opacity-80" />
+                {weatherData.loading && (
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+                )}
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-6">
-                <div className="flex items-center space-x-2">
-                  <Droplets className="w-5 h-5" />
-                  <span className="text-sm">Humidity: {weatherData.humidity}</span>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-amber-200/50">
+                <div className="bg-white/60 rounded-xl p-3 backdrop-blur-sm">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <Droplets className="w-4 h-4 text-amber-700" />
+                    <span className="text-xs text-amber-600 font-medium">Humidity</span>
+                  </div>
+                  <p className="text-lg font-bold text-amber-900">{weatherData.humidity}</p>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <ThermometerSun className="w-5 h-5" />
-                  <span className="text-sm">Rainfall: {weatherData.rainfall}</span>
+                <div className="bg-white/60 rounded-xl p-3 backdrop-blur-sm">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <Cloud className="w-4 h-4 text-amber-700" />
+                    <span className="text-xs text-amber-600 font-medium">Rainfall</span>
+                  </div>
+                  <p className="text-lg font-bold text-amber-900">{weatherData.rainfall}</p>
                 </div>
+                {weatherData.windSpeed && (
+                  <div className="bg-white/60 rounded-xl p-3 backdrop-blur-sm">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <Sun className="w-4 h-4 text-amber-700" />
+                      <span className="text-xs text-amber-600 font-medium">Wind</span>
+                    </div>
+                    <p className="text-lg font-bold text-amber-900">{weatherData.windSpeed}</p>
+                  </div>
+                )}
+                {weatherData.pressure && (
+                  <div className="bg-white/60 rounded-xl p-3 backdrop-blur-sm">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <ThermometerSun className="w-4 h-4 text-amber-700" />
+                      <span className="text-xs text-amber-600 font-medium">Pressure</span>
+                    </div>
+                    <p className="text-lg font-bold text-amber-900">{weatherData.pressure}</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { name: t('home.cropGuide'), icon: BookOpen, tab: 'guide', color: 'from-green-500 to-emerald-600' },
-                { name: t('home.calendar'), icon: Calendar, tab: 'calendar', color: 'from-orange-500 to-amber-600' },
-                { name: t('home.farmTracker'), icon: Leaf, tab: 'tracker', color: 'from-purple-500 to-violet-600' },
-                { name: t('home.pestTips'), icon: Bug, tab: 'pest', color: 'from-red-500 to-pink-600' },
+                { name: t('home.cropGuide'), icon: BookOpen, tab: 'guide', color: 'from-green-400 to-emerald-500', bg: 'bg-green-50', border: 'border-green-200' },
+                { name: t('home.calendar'), icon: Calendar, tab: 'calendar', color: 'from-orange-400 to-amber-500', bg: 'bg-orange-50', border: 'border-orange-200' },
+                { name: t('home.farmTracker'), icon: Leaf, tab: 'tracker', color: 'from-lime-400 to-green-500', bg: 'bg-lime-50', border: 'border-lime-200' },
+                { name: t('home.pestTips'), icon: Bug, tab: 'pest', color: 'from-rose-400 to-pink-500', bg: 'bg-rose-50', border: 'border-rose-200' },
                 ...(farmingType === 'livestock' || farmingType === 'mixed' ? [
-                  { name: t('nav.livestock'), icon: Heart, tab: 'livestock', color: 'from-blue-500 to-indigo-600' }
+                  { name: t('nav.livestock'), icon: Heart, tab: 'livestock', color: 'from-red-400 to-rose-500', bg: 'bg-red-50', border: 'border-red-200' }
                 ] : []),
                 ...(farmingType === 'mixed' ? [
-                  { name: t('nav.mixed'), icon: Sparkles, tab: 'mixed', color: 'from-teal-500 to-cyan-600' }
+                  { name: t('nav.mixed'), icon: Sparkles, tab: 'mixed', color: 'from-amber-400 to-yellow-500', bg: 'bg-amber-50', border: 'border-amber-200' }
                 ] : [])
               ].map((action) => (
                 <button
                   key={action.name}
                   onClick={() => setActiveTab(action.tab)}
-                  className={`bg-gradient-to-br ${action.color} p-6 rounded-2xl text-white shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all`}
+                  className={`relative overflow-hidden ${action.bg} border-2 ${action.border} p-6 rounded-2xl shadow-md hover:shadow-xl transform hover:scale-[1.02] transition-all group`}
                 >
-                  <action.icon className="w-8 h-8 mb-3" />
-                  <p className="font-semibold">{action.name}</p>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                  <div className="relative z-10">
+                    <action.icon className="w-10 h-10 mb-3 text-amber-800 group-hover:text-white transition-colors" />
+                    <p className="font-semibold text-amber-900 group-hover:text-white transition-colors">{action.name}</p>
+                  </div>
                 </button>
               ))}
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-800">{t('home.activeCrops')}</h3>
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-lg border-2 border-amber-100">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-xl font-bold text-amber-900">{t('home.activeCrops')}</h3>
                 <button 
                   onClick={() => setActiveTab('tracker')}
-                  className="text-green-600 text-sm font-semibold"
+                  className="text-amber-700 hover:text-amber-900 text-sm font-semibold transition-colors"
                 >
-                  {t('common.viewAll')}
+                  {t('common.viewAll')} →
                 </button>
               </div>
               <div className="space-y-3">
                 {farmLogs.slice(0, 3).map((log, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl hover:shadow-md transition-all">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-                        <span className="text-2xl">{crops.find(c => c.name === log.crop)?.icon}</span>
+                  <div key={idx} className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50/50 to-orange-50/50 rounded-2xl hover:shadow-md transition-all border border-amber-100">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border-2 border-amber-100">
+                        <span className="text-3xl">{crops.find(c => c.name === log.crop)?.icon}</span>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-800">{log.crop}</p>
-                        <p className="text-sm text-gray-600">{log.status}</p>
+                        <p className="font-bold text-amber-900">{log.crop}</p>
+                        <p className="text-sm text-amber-700">{log.status}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-green-600">{log.daysLeft} {t('home.daysToHarvest')}</p>
+                      <p className="text-sm font-bold text-amber-800">{log.daysLeft}</p>
+                      <p className="text-xs text-amber-600">{t('home.daysToHarvest')}</p>
                     </div>
                   </div>
                 ))}
@@ -1046,7 +1102,7 @@ const SmartFarmerApp = () => {
                   <div className="space-y-4">
                     <div className="bg-green-50 p-4 rounded-2xl">
                       <p className="text-sm font-semibold text-gray-700 mb-1">{t('guide.plantingMonths')}</p>
-                      <p className="text-green-600 font-semibold">{selectedCrop.plantingMonths.join(', ')}</p>
+                      <p className="text-amber-600 font-semibold">{selectedCrop.plantingMonths.join(', ')}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-blue-50 p-4 rounded-2xl">
@@ -1065,7 +1121,7 @@ const SmartFarmerApp = () => {
                   </div>
                   <button
                     onClick={() => setSelectedCrop(null)}
-                    className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="w-full mt-6 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     {t('common.close')}
                   </button>
@@ -1129,7 +1185,7 @@ const SmartFarmerApp = () => {
                   </div>
                   <button
                     onClick={() => setSelectedMonth(null)}
-                    className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="w-full mt-6 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     {t('common.close')}
                   </button>
@@ -1146,7 +1202,7 @@ const SmartFarmerApp = () => {
               <p className="text-gray-600">{t('tracker.subtitle')}</p>
             </div>
 
-            <button className="w-full mb-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2" onClick={() => setShowAddLogModal(true)}>
+            <button className="w-full mb-6 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2" onClick={() => setShowAddLogModal(true)}>
               <Plus className="w-5 h-5" />
               <span>{t('tracker.addNewLog')}</span>
             </button>
@@ -1158,7 +1214,7 @@ const SmartFarmerApp = () => {
                   <p className="text-gray-500 mb-4">{t('tracker.noLogs')}</p>
                   <button 
                     onClick={() => setShowAddLogModal(true)}
-                    className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all"
+                    className="px-6 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-all"
                   >
                     {t('tracker.addFirstLog')}
                   </button>
@@ -1182,7 +1238,7 @@ const SmartFarmerApp = () => {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div 
-                      className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all"
+                      className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all"
                       style={{width: `${((90 - log.daysLeft) / 90) * 100}%`}}
                     />
                   </div>
@@ -1460,7 +1516,7 @@ const SmartFarmerApp = () => {
 
                   <button
                     onClick={() => setSelectedLivestock(null)}
-                    className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="w-full mt-6 py-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     {t('common.close')}
                   </button>
@@ -1629,13 +1685,13 @@ const SmartFarmerApp = () => {
         }}
       />
 
-      <footer className="bg-gradient-to-br from-green-800 via-emerald-900 to-teal-900 text-white mt-20">
+      <footer className="bg-gradient-to-br from-amber-800 via-orange-800 to-yellow-800 text-white mt-20 border-t-4 border-amber-600">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="animate-slideInLeft">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                  <Leaf className="w-6 h-6 text-green-600" />
+                <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                  <Leaf className="w-6 h-6 text-amber-600" />
                 </div>
                 <h3 className="text-xl font-bold">Smart Farmer</h3>
               </div>
@@ -1657,7 +1713,7 @@ const SmartFarmerApp = () => {
                   <li key={link.name}>
                     <button 
                       onClick={() => setActiveTab(link.tab)}
-                      className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                      className="text-amber-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
                     >
                       {link.name}
                     </button>
@@ -1672,7 +1728,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowWeatherUpdates(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-amber-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
                   >
                     Weather Updates
                   </button>
@@ -1680,7 +1736,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowMarketPrices(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-amber-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
                   >
                     Market Prices
                   </button>
@@ -1688,7 +1744,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowFarmingTips(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-amber-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
                   >
                     Farming Tips
                   </button>
@@ -1696,7 +1752,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowCommunityForum(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-amber-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
                   >
                     Community Forum
                   </button>
@@ -1704,7 +1760,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowHelpCenter(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-amber-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
                   >
                     Help Center
                   </button>
@@ -1740,12 +1796,12 @@ const SmartFarmerApp = () => {
             </div>
           </div>
 
-          <div className="border-t border-green-700 pt-8 mt-8">
+          <div className="border-t border-amber-700 pt-8 mt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <p className="text-green-100 text-sm text-center md:text-left">
+              <p className="text-amber-100 text-sm text-center md:text-left">
                 © 2025 Smart Farmer. All rights reserved. Built with <Heart className="w-4 h-4 inline text-red-400 animate-pulse" /> for Nigerian farmers.
               </p>
-              <div className="flex flex-wrap justify-center gap-4 text-sm text-green-100">
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-amber-100">
                 <button 
                   onClick={() => setShowPrivacyPolicy(true)}
                   className="hover:text-white transition-colors"
@@ -1771,7 +1827,7 @@ const SmartFarmerApp = () => {
           </div>
 
           <div className="mt-8 text-center">
-            <p className="text-green-200 text-xs">
+            <p className="text-amber-200 text-xs">
               Developed by <span className="font-semibold">Ajibade Tosin Francis, Omoyeni Naomi, Sandra Ogechi Ezeugonna & Tolough Nelson Aondongu</span>
             </p>
           </div>
