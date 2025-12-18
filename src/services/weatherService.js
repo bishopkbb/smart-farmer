@@ -55,6 +55,12 @@ const getWeatherCondition = (weatherMain) => {
 export const weatherService = {
   // Get current weather for a region
   async getCurrentWeather(region) {
+    // Check if offline
+    if (!navigator.onLine) {
+      console.log('[Weather Service] Offline - using cached/mock data');
+      return this.getMockWeather();
+    }
+
     if (!WEATHER_API_KEY) {
       // Fallback to mock data if no API key
       return this.getMockWeather();
@@ -67,7 +73,8 @@ export const weatherService = {
 
     try {
       const response = await fetch(
-        `${WEATHER_API_URL}/weather?lat=${location.lat}&lon=${location.lon}&appid=${WEATHER_API_KEY}&units=metric`
+        `${WEATHER_API_URL}/weather?lat=${location.lat}&lon=${location.lon}&appid=${WEATHER_API_KEY}&units=metric`,
+        { cache: 'default' }
       );
 
       if (!response.ok) {
@@ -91,12 +98,19 @@ export const weatherService = {
       };
     } catch (error) {
       console.error('Weather fetch error:', error);
+      // Return mock data on error (works offline)
       return this.getMockWeather();
     }
   },
 
   // Get 7-day forecast
   async getForecast(region) {
+    // Check if offline
+    if (!navigator.onLine) {
+      console.log('[Weather Service] Offline - using cached/mock forecast');
+      return this.getMockForecast();
+    }
+
     if (!WEATHER_API_KEY) {
       return this.getMockForecast();
     }
@@ -108,7 +122,8 @@ export const weatherService = {
 
     try {
       const response = await fetch(
-        `${WEATHER_API_URL}/forecast?lat=${location.lat}&lon=${location.lon}&appid=${WEATHER_API_KEY}&units=metric`
+        `${WEATHER_API_URL}/forecast?lat=${location.lat}&lon=${location.lon}&appid=${WEATHER_API_KEY}&units=metric`,
+        { cache: 'default' }
       );
 
       if (!response.ok) {

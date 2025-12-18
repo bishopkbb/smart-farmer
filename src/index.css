@@ -2,14 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Beautiful Dark Mode with Green Theme */
+/* Enhanced Dark Mode with Prominent Green Theme - High Contrast */
 .dark {
   color-scheme: dark;
 }
 
 .dark body {
-  background: linear-gradient(135deg, #064e3b 0%, #022c22 100%) !important;
-  color: #f0fdf4;
+  background: linear-gradient(135deg, #065f46 0%, #064e3b 20%, #022c22 100%) !important;
+  color: #ecfdf5 !important;
+  min-height: 100vh;
+}
+
+/* Enhanced contrast for all text in dark mode */
+.dark * {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #ecfdf5 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(34, 197, 94, 0.3) !important;
 }
 
 .dark .bg-gradient-to-br.from-green-50 {
@@ -17,29 +28,32 @@
 }
 
 .dark .bg-white {
-  background-color: #0a2f29 !important;
-  color: #f0fdf4;
-  border: 1px solid #10b981;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  background-color: #0f5132 !important;
+  color: #ecfdf5 !important;
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3), 0 0 0 1px rgba(34, 197, 94, 0.2) !important;
 }
 
 .dark .bg-gray-50 {
-  background-color: #031a16 !important;
+  background-color: #064e3b !important;
+  color: #ecfdf5 !important;
 }
 
 .dark .bg-gray-100 {
   background-color: #065f46 !important;
-  color: #f0fdf4;
+  color: #ecfdf5 !important;
+  border-color: #22c55e !important;
 }
 
 .dark .bg-gray-200 {
   background-color: #047857 !important;
-  color: #f0fdf4;
+  color: #ecfdf5 !important;
 }
 
 .dark .bg-green-50 {
-  background-color: #0a2f29 !important;
+  background-color: #0f5132 !important;
   color: #ecfdf5 !important;
+  border-color: #22c55e !important;
 }
 
 .dark .bg-green-50 * {
@@ -47,27 +61,49 @@
 }
 
 .dark .bg-green-100 {
-  background-color: #065f46 !important;
-  color: #a7f3d0 !important;
+  background-color: #15803d !important;
+  color: #dcfce7 !important;
+  border-color: #34d399 !important;
 }
 
 .dark .bg-blue-50 {
   background-color: #1e3a5f !important;
   color: #bfdbfe !important;
+  border-color: #3b82f6 !important;
 }
 
 .dark .bg-orange-50 {
   background-color: #7c2d12 !important;
   color: #fed7aa !important;
+  border-color: #f97316 !important;
 }
 
 .dark .bg-purple-50 {
   background-color: #4c1d95 !important;
   color: #ddd6fe !important;
+  border-color: #a855f7 !important;
+}
+
+.dark .bg-red-50 {
+  background-color: #7f1d1d !important;
+  color: #fecaca !important;
+  border-color: #ef4444 !important;
+}
+
+.dark .bg-teal-50 {
+  background-color: #134e4a !important;
+  color: #99f6e4 !important;
+  border-color: #14b8a6 !important;
+}
+
+.dark .bg-yellow-50 {
+  background-color: #713f12 !important;
+  color: #fef3c7 !important;
+  border-color: #eab308 !important;
 }
 
 .dark .text-gray-800 {
-  color: #f0fdf4 !important;
+  color: #ecfdf5 !important;
 }
 
 .dark .text-gray-700 {
@@ -79,23 +115,31 @@
 }
 
 .dark .text-gray-500 {
-  color: #6ee7b7 !important;
-}
-
-.dark .text-gray-400 {
-  color: #34d399 !important;
-}
-
-.dark .text-green-600 {
   color: #86efac !important;
 }
 
-.dark .text-green-700 {
+.dark .text-gray-400 {
+  color: #6ee7b7 !important;
+}
+
+.dark .text-green-600 {
   color: #4ade80 !important;
+  font-weight: 600;
+}
+
+.dark .text-green-700 {
+  color: #22c55e !important;
+  font-weight: 600;
 }
 
 .dark .text-green-800 {
-  color: #22c55e !important;
+  color: #16a34a !important;
+  font-weight: 700;
+}
+
+.dark .text-green-900 {
+  color: #15803d !important;
+  font-weight: 700;
 }
 
 .dark .text-green-100 {
@@ -106,44 +150,113 @@
   color: #bbf7d0 !important;
 }
 
+.dark .text-green-500 {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
 .dark .border-gray-200 {
-  border-color: #166534 !important;
+  border-color: #22c55e !important;
 }
 
 .dark .border-green-200 {
-  border-color: #16a34a !important;
+  border-color: #34d399 !important;
+}
+
+.dark .border-green-100 {
+  border-color: #4ade80 !important;
+}
+
+.dark .border-green-500 {
+  border-color: #22c55e !important;
 }
 
 .dark .shadow-xl,
 .dark .shadow-2xl,
 .dark .shadow-lg {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.8), 0 10px 10px -5px rgba(34, 197, 94, 0.4), 0 0 20px rgba(16, 185, 129, 0.2) !important;
+}
+
+.dark .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(34, 197, 94, 0.3) !important;
 }
 
 .dark .hover\:bg-gray-100:hover {
-  background-color: #065f46 !important;
+  background-color: #15803d !important;
+  border-color: #22c55e !important;
 }
 
 .dark .hover\:bg-gray-200:hover {
-  background-color: #047857 !important;
+  background-color: #16a34a !important;
+  border-color: #34d399 !important;
 }
 
 .dark .hover\:bg-gray-300:hover {
-  background-color: #059669 !important;
+  background-color: #22c55e !important;
+  border-color: #4ade80 !important;
 }
 
-/* Gradient cards stay vibrant in dark mode */
-.dark .bg-gradient-to-br.from-blue-500,
-.dark .bg-gradient-to-br.from-orange-500,
-.dark .bg-gradient-to-br.from-purple-500,
+.dark .hover\:bg-green-50:hover {
+  background-color: #15803d !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.3) !important;
+}
+
+.dark .hover\:bg-green-100:hover {
+  background-color: #16a34a !important;
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 15px rgba(52, 211, 153, 0.4) !important;
+}
+
+/* Gradient cards stay vibrant in dark mode with green glow */
+.dark .bg-gradient-to-br.from-blue-500 {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
+}
+
+.dark .bg-gradient-to-br.from-orange-500 {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4) !important;
+}
+
+.dark .bg-gradient-to-br.from-purple-500 {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4) !important;
+}
+
 .dark .bg-gradient-to-br.from-red-500 {
-  /* Keep original gradients for accent cards */
-  filter: brightness(0.9);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4) !important;
 }
 
-/* Footer in dark mode - keep green gradient */
+.dark .bg-gradient-to-br.from-teal-500 {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4) !important;
+}
+
+/* Footer in dark mode - enhanced green gradient */
 .dark footer {
-  background: linear-gradient(to bottom right, #065f46, #064e3b, #047857) !important;
+  background: linear-gradient(to bottom right, #15803d, #16a34a, #22c55e, #047857) !important;
+  border-top: 3px solid #34d399 !important;
+}
+
+/* Header in dark mode */
+.dark header {
+  background: rgba(15, 81, 50, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid #22c55e !important;
+}
+
+/* Enhanced green gradients in dark mode */
+.dark .bg-gradient-to-br.from-green-500,
+.dark .bg-gradient-to-br.from-green-400 {
+  background: linear-gradient(to bottom right, #22c55e, #16a34a, #15803d) !important;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4) !important;
+}
+
+.dark .bg-gradient-to-r.from-green-500 {
+  background: linear-gradient(to right, #22c55e, #16a34a) !important;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4) !important;
 }
 
 /* Custom animations */
@@ -322,9 +435,33 @@ select:focus {
 }
 
 .dark .glass {
-  background: rgba(6, 78, 59, 0.8);
+  background: rgba(15, 81, 50, 0.9) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(34, 197, 94, 0.3) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 197, 94, 0.2) !important;
+}
+
+/* Enhanced button styles in dark mode */
+.dark button {
+  border-width: 2px !important;
+}
+
+.dark button:hover {
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+/* Enhanced card backgrounds in dark mode */
+.dark .bg-white\/80,
+.dark .bg-white\/60 {
+  background-color: rgba(15, 81, 50, 0.9) !important;
+  border: 2px solid rgba(34, 197, 94, 0.4) !important;
+}
+
+/* Better visibility for borders in dark mode */
+.dark [class*="border-"] {
+  border-width: 2px !important;
 }
 
 /* Ensure body takes full height */
@@ -403,22 +540,24 @@ input, select, textarea {
 .dark input,
 .dark select,
 .dark textarea {
-  background-color: #065f46;
-  color: #f0fdf4;
-  border-color: #10b981;
+  background-color: #0f5132 !important;
+  color: #ecfdf5 !important;
+  border-color: #22c55e !important;
+  border-width: 2px !important;
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: #6ee7b7;
-  opacity: 0.7;
+  color: #86efac !important;
+  opacity: 0.8;
 }
 
 .dark input:focus,
 .dark select:focus,
 .dark textarea:focus {
-  border-color: #34d399;
-  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.1);
+  border-color: #34d399 !important;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.3), 0 0 10px rgba(34, 197, 94, 0.2) !important;
+  background-color: #15803d !important;
 }
 
 /* Safe area for notched devices */
@@ -427,4 +566,120 @@ input, select, textarea {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
   }
+}
+
+/* Enhanced dark mode contrast improvements */
+.dark .bg-white\/90,
+.dark .bg-white\/80,
+.dark .bg-white\/70,
+.dark .bg-white\/60 {
+  background-color: rgba(15, 81, 50, 0.95) !important;
+  color: #ecfdf5 !important;
+  border: 2px solid rgba(34, 197, 94, 0.4) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #064e3b !important;
+  color: #ecfdf5 !important;
+}
+
+/* Enhanced modal and overlay backgrounds in dark mode */
+.dark .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Better link visibility in dark mode */
+.dark a {
+  color: #4ade80 !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dark a:hover {
+  color: #86efac !important;
+  text-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+/* Enhanced select dropdowns in dark mode */
+.dark select {
+  background-color: #0f5132 !important;
+  color: #ecfdf5 !important;
+  border: 2px solid #22c55e !important;
+}
+
+.dark select option {
+  background-color: #0f5132 !important;
+  color: #ecfdf5 !important;
+}
+
+/* Better visibility for disabled states */
+.dark .disabled\:opacity-50:disabled,
+.dark [disabled] {
+  opacity: 0.6 !important;
+  border-color: #047857 !important;
+}
+
+/* Enhanced backdrop blur effects */
+.dark .backdrop-blur-sm,
+.dark .backdrop-blur-lg {
+  background-color: rgba(15, 81, 50, 0.85) !important;
+}
+
+/* Better contrast for code/technical text */
+.dark code,
+.dark pre {
+  background-color: #022c22 !important;
+  color: #86efac !important;
+  border: 1px solid #22c55e !important;
+}
+
+/* Enhanced table visibility in dark mode */
+.dark table {
+  border-color: #22c55e !important;
+}
+
+.dark th,
+.dark td {
+  border-color: #34d399 !important;
+  color: #ecfdf5 !important;
+}
+
+.dark th {
+  background-color: #15803d !important;
+  color: #ecfdf5 !important;
+}
+
+/* Better visibility for badges and tags */
+.dark [class*="badge"],
+.dark [class*="tag"] {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Enhanced progress bars in dark mode */
+.dark [class*="progress"],
+.dark [role="progressbar"] {
+  background-color: #022c22 !important;
+  border: 2px solid #22c55e !important;
+}
+
+/* Better visibility for dividers */
+.dark hr,
+.dark [class*="divider"] {
+  border-color: #22c55e !important;
+  background-color: #22c55e !important;
+}
+
+/* Enhanced notification styles */
+.dark .notification-btn,
+.dark .settings-btn {
+  border: 2px solid transparent !important;
+}
+
+.dark .notification-btn:hover,
+.dark .settings-btn:hover {
+  border-color: #22c55e !important;
+  background-color: #15803d !important;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.4) !important;
 }

@@ -122,11 +122,6 @@ const SmartFarmerApp = () => {
 
   useEffect(() => {
     const fetchWeather = async () => {
-      if (!navigator.onLine) {
-        setWeatherData(prev => ({ ...prev, loading: false }));
-        return;
-      }
-
       setWeatherData(prev => ({ ...prev, loading: true }));
 
       try {
@@ -145,6 +140,7 @@ const SmartFarmerApp = () => {
         }
       } catch (error) {
         console.error('Failed to fetch weather:', error);
+        // Always provide data, even if offline
         const mockData = weatherService.getMockWeather();
         setWeatherData(mockData);
         setForecastData(weatherService.getMockForecast());
@@ -152,8 +148,36 @@ const SmartFarmerApp = () => {
     };
 
     fetchWeather();
-    const interval = setInterval(fetchWeather, 30 * 60 * 1000); // Update every 30 minutes
-    return () => clearInterval(interval);
+    
+    // Only set up interval if online
+    let interval;
+    if (navigator.onLine) {
+      interval = setInterval(fetchWeather, 30 * 60 * 1000); // Update every 30 minutes
+    }
+    
+    // Listen for online/offline events
+    const handleOnline = () => {
+      fetchWeather();
+      if (!interval) {
+        interval = setInterval(fetchWeather, 30 * 60 * 1000);
+      }
+    };
+    
+    const handleOffline = () => {
+      // Use cached/mock data when offline
+      const mockData = weatherService.getMockWeather();
+      setWeatherData({ ...mockData, loading: false });
+      setForecastData(weatherService.getMockForecast());
+    };
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, [userLocation]);
 
   const handleTourFinish = () => {
@@ -939,25 +963,28 @@ const SmartFarmerApp = () => {
         </div>
       </header>
 
-      <main className="pt-20 pb-8 md:pb-8 px-4 max-w-7xl mx-auto bg-gradient-to-b from-green-50/30 to-white min-h-screen">
+      <main className="pt-20 pb-8 md:pb-8 px-4 max-w-7xl mx-auto bg-gradient-to-b from-green-50/30 to-white dark:from-green-900/30 dark:to-green-950 min-h-screen">
         {activeTab === 'home' && (
           <div className="space-y-6 animate-fadeIn">
             {/* Weather Card - Improved design with green theme */}
-            <div className="bg-gradient-to-br from-green-100 via-emerald-50 to-teal-50 rounded-3xl p-6 md:p-8 shadow-lg border-2 border-green-200/50 transform hover:shadow-xl transition-all">
+            <div className="bg-gradient-to-br from-green-100 via-emerald-50 to-teal-50 dark:from-green-900 dark:via-emerald-900 dark:to-teal-900 rounded-3xl p-6 md:p-8 shadow-lg border-2 border-green-200/50 dark:border-green-500/50 transform hover:shadow-xl transition-all">
               <div className="flex items-start justify-between mb-6">
                 <div className="flex-1">
-                  <p className="text-sm text-green-800 font-medium mb-2">{t('home.todaysWeather')}</p>
+                  <p className="text-sm text-green-800 dark:text-green-200 font-medium mb-2">{t('home.todaysWeather')}</p>
                   <div className="flex items-baseline space-x-3 mb-2">
-                    <span className="text-5xl md:text-6xl font-bold text-green-900">{weatherData.temp}</span>
+                    <span className="text-5xl md:text-6xl font-bold text-green-900 dark:text-green-100">{weatherData.temp}</span>
                     <span className="text-4xl">{weatherData.icon || '⛅'}</span>
                   </div>
-                  <p className="text-lg text-green-700 font-medium">{weatherData.condition}</p>
+                  <p className="text-lg text-green-700 dark:text-green-300 font-medium">{weatherData.condition}</p>
                   {weatherData.feelsLike && (
-                    <p className="text-sm text-green-600 mt-1">Feels like {weatherData.feelsLike}</p>
+                    <p className="text-sm text-green-600 dark:text-green-400 mt-1">Feels like {weatherData.feelsLike}</p>
+                  )}
+                  {!navigator.onLine && (
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-2 opacity-75">📴 Offline mode - showing cached data</p>
                   )}
                 </div>
                 {weatherData.loading && (
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 dark:border-green-400"></div>
                 )}
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-green-200/50">
@@ -1028,26 +1055,26 @@ const SmartFarmerApp = () => {
                 <h3 className="text-xl font-bold text-green-900">{t('home.activeCrops')}</h3>
                 <button 
                   onClick={() => setActiveTab('tracker')}
-                  className="text-green-700 hover:text-green-900 text-sm font-semibold transition-colors"
+                  className="text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100 text-sm font-semibold transition-colors"
                 >
                   {t('common.viewAll')} →
                 </button>
               </div>
               <div className="space-y-3">
                 {farmLogs.slice(0, 3).map((log, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50/50 to-emerald-50/50 rounded-2xl hover:shadow-md transition-all border border-green-100">
+                  <div key={idx} className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50/50 to-emerald-50/50 dark:from-green-800/50 dark:to-emerald-800/50 rounded-2xl hover:shadow-md transition-all border border-green-100 dark:border-green-500">
                     <div className="flex items-center space-x-4">
-                      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm border-2 border-green-100">
+                      <div className="w-14 h-14 bg-white dark:bg-green-800 rounded-2xl flex items-center justify-center shadow-sm border-2 border-green-100 dark:border-green-500">
                         <span className="text-3xl">{crops.find(c => c.name === log.crop)?.icon}</span>
                       </div>
                       <div>
-                        <p className="font-bold text-green-900">{log.crop}</p>
-                        <p className="text-sm text-green-700">{log.status}</p>
+                        <p className="font-bold text-green-900 dark:text-green-100">{log.crop}</p>
+                        <p className="text-sm text-green-700 dark:text-green-300">{log.status}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-green-800">{log.daysLeft}</p>
-                      <p className="text-xs text-green-600">{t('home.daysToHarvest')}</p>
+                      <p className="text-sm font-bold text-green-800 dark:text-green-200">{log.daysLeft}</p>
+                      <p className="text-xs text-green-600 dark:text-green-400">{t('home.daysToHarvest')}</p>
                     </div>
                   </div>
                 ))}
@@ -1148,9 +1175,9 @@ const SmartFarmerApp = () => {
                   <button
                     key={idx}
                     onClick={() => setSelectedMonth(month)}
-                    className="bg-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all text-left"
+                    className="bg-white dark:bg-green-900 p-5 rounded-2xl shadow-lg dark:shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all text-left border-2 border-green-100 dark:border-green-500"
                   >
-                    <h3 className="font-bold text-gray-800 mb-2">{month}</h3>
+                    <h3 className="font-bold text-gray-800 dark:text-green-100 mb-2">{month}</h3>
                     <div className="flex flex-wrap gap-1">
                       {recommendedCrops.slice(0, 3).map((crop, i) => (
                         <span key={i} className="text-xl">{crop.icon}</span>
@@ -1160,7 +1187,7 @@ const SmartFarmerApp = () => {
                       )}
                     </div>
                     {recommendedCrops.length === 0 && (
-                      <p className="text-sm text-gray-400">{t('calendar.noRecommendations')}</p>
+                      <p className="text-sm text-gray-400 dark:text-green-400">{t('calendar.noRecommendations')}</p>
                     )}
                   </button>
                 );
@@ -1169,23 +1196,23 @@ const SmartFarmerApp = () => {
             )}
 
             {selectedMonth && (
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedMonth(null)}>
-                <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-3xl font-bold text-gray-800 mb-6">{selectedMonth}</h2>
+              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedMonth(null)}>
+                <div className="bg-white dark:bg-green-900 rounded-3xl p-8 max-w-md w-full shadow-2xl dark:shadow-2xl max-h-[80vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
+                  <h2 className="text-3xl font-bold text-gray-800 dark:text-green-100 mb-6">{selectedMonth}</h2>
                   <div className="space-y-3">
                     {getRecommendedCrops(selectedMonth).map((crop, idx) => (
-                      <div key={idx} className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
+                      <div key={idx} className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-800 dark:to-emerald-800 rounded-2xl border-2 border-green-200 dark:border-green-500">
                         <span className="text-4xl">{crop.icon}</span>
                         <div className="flex-1">
-                          <h3 className="font-bold text-gray-800">{crop.name}</h3>
-                          <p className="text-sm text-gray-600">{crop.harvestTime} to harvest</p>
+                          <h3 className="font-bold text-gray-800 dark:text-green-100">{crop.name}</h3>
+                          <p className="text-sm text-gray-600 dark:text-green-300">{crop.harvestTime} to harvest</p>
                         </div>
                       </div>
                     ))}
                   </div>
                   <button
                     onClick={() => setSelectedMonth(null)}
-                    className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                    className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     {t('common.close')}
                   </button>
@@ -1290,7 +1317,7 @@ const SmartFarmerApp = () => {
                     setPestSolution(null);
                   }}
                   disabled={!selectedPestCrop}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-3 border-2 border-gray-200 dark:border-green-500 dark:bg-green-800 rounded-xl focus:border-green-500 dark:focus:border-green-400 focus:outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-green-950 disabled:cursor-not-allowed text-gray-800 dark:text-green-100"
                 >
                   <option value="">{t('pest.selectSymptom')}</option>
                   {selectedPestCrop && pestDatabase[selectedPestCrop] && 
@@ -1344,12 +1371,12 @@ const SmartFarmerApp = () => {
                 { title: 'Tomato Blight', symptom: 'Brown spots', solution: 'Remove affected plants' },
                 { title: 'Root Rot', symptom: 'Wilting plants', solution: 'Improve drainage' }
               ].map((pest, idx) => (
-                <div key={idx} className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                  <h3 className="font-bold text-gray-800 mb-2">{pest.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{t('pest.symptom')}: {pest.symptom}</p>
+                <div key={idx} className="bg-white dark:bg-green-900 p-6 rounded-2xl shadow-lg dark:shadow-xl hover:shadow-xl transition-all border-2 border-green-100 dark:border-green-500">
+                  <h3 className="font-bold text-gray-800 dark:text-green-100 mb-2">{pest.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-green-300 mb-3">{t('pest.symptom')}: {pest.symptom}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-green-600">{pest.solution}</span>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">{pest.solution}</span>
+                    <ChevronRight className="w-5 h-5 text-gray-400 dark:text-green-400" />
                   </div>
                 </div>
               ))}
@@ -1889,11 +1916,11 @@ const SmartFarmerApp = () => {
       )}
 
       {showSettings && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowSettings(false)}>
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowSettings(false)}>
+          <div className="bg-white dark:bg-green-900 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[80vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-                <Settings className="w-6 h-6 mr-2 text-green-600" />
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-green-100 flex items-center">
+                <Settings className="w-6 h-6 mr-2 text-green-600 dark:text-green-400" />
                 {t('settings.title')}
               </h2>
               <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-gray-100 rounded-full transition-all">
@@ -1938,8 +1965,8 @@ const SmartFarmerApp = () => {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-800">{t('settings.darkMode')}</p>
-                      <p className="text-xs text-gray-600">{t('settings.switchTheme')}</p>
+                      <p className="font-semibold text-gray-800 dark:text-green-100">{t('settings.darkMode')}</p>
+                      <p className="text-xs text-gray-600 dark:text-green-300">{t('settings.switchTheme')}</p>
                     </div>
                     <button
                       onClick={() => setSettings({...settings, darkMode: !settings.darkMode})}
@@ -1954,7 +1981,7 @@ const SmartFarmerApp = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">{t('settings.language')}</label>
+                    <label className="block text-sm font-semibold text-gray-800 dark:text-green-200 mb-2">{t('settings.language')}</label>
                     <select
                       value={settings.language}
                       onChange={(e) => {
@@ -1962,7 +1989,7 @@ const SmartFarmerApp = () => {
                         setSettings({...settings, language: newLang});
                         changeLanguage(newLang);
                       }}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-green-500 dark:bg-green-800 rounded-xl focus:border-green-500 dark:focus:border-green-400 focus:outline-none transition-all text-gray-800 dark:text-green-100"
                     >
                       <option>English</option>
                       <option>Yoruba</option>
@@ -1972,11 +1999,11 @@ const SmartFarmerApp = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">{t('settings.units')}</label>
+                    <label className="block text-sm font-semibold text-gray-800 dark:text-green-200 mb-2">{t('settings.units')}</label>
                     <select
                       value={settings.units}
                       onChange={(e) => setSettings({...settings, units: e.target.value})}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-green-500 dark:bg-green-800 rounded-xl focus:border-green-500 dark:focus:border-green-400 focus:outline-none transition-all text-gray-800 dark:text-green-100"
                     >
                       <option>{t('settings.metric')}</option>
                       <option>{t('settings.imperial')}</option>
@@ -2028,10 +2055,10 @@ const SmartFarmerApp = () => {
       )}
 
       {showAddLogModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowAddLogModal(false)}>
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowAddLogModal(false)}>
+          <div className="bg-white dark:bg-green-900 rounded-3xl p-8 max-w-md w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">{t('tracker.addFarmLog')}</h2>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-green-100">{t('tracker.addFarmLog')}</h2>
               <button onClick={() => setShowAddLogModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-all">
                 <X className="w-6 h-6" />
               </button>
@@ -2098,14 +2125,14 @@ const SmartFarmerApp = () => {
               <div className="flex space-x-3 pt-4">
                 <button
                   onClick={() => setShowAddLogModal(false)}
-                  className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
+                  className="flex-1 py-3 bg-gray-200 dark:bg-green-800 text-gray-700 dark:text-green-100 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-green-700 transition-all border-2 border-gray-300 dark:border-green-600"
                 >
                   {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleAddLog}
                   disabled={!newLog.crop || !newLog.datePlanted}
-                  className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('tracker.addLog')}
                 </button>
