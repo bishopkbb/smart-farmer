@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Leaf, Calendar, BookOpen, Bug, TrendingUp, Menu, X, Sun, Cloud, Droplets, ThermometerSun, ChevronRight, Search, Plus, Bell, Settings, Home, Heart, Mail, Github, Twitter, Linkedin } from 'lucide-react';
+import { Leaf, Calendar, BookOpen, Bug, TrendingUp, Menu, X, Sun, Cloud, Droplets, ThermometerSun, ChevronRight, Search, Plus, Bell, Settings, Home, Heart, Mail, Github, Twitter, Linkedin, Sparkles } from 'lucide-react';
 import Toaster, { showToast } from './components/ui/Toast';
 import { storage } from './utils/storage';
 import { SkeletonWeather, SkeletonAction, SkeletonFarmLog, SkeletonCropCard, SkeletonMonthCard, SkeletonGrid, SkeletonList } from './components/ui/SkeletonLoader';
@@ -7,8 +7,14 @@ import { HomePageSEO, CropGuideSEO, CalendarSEO, TrackerSEO, PestSEO } from './c
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import OnboardingTour from './components/OnboardingTour';
+import VoiceNavigation from './components/VoiceNavigation';
+import AIPestDetection from './components/AIPestDetection';
+import { livestockTypes } from './data/livestock';
+import { mixedFarmingSystems, integratedPractices, seasonalPlanning } from './data/mixedFarming';
+import { useT } from './context/TranslationContext';
 
 const SmartFarmerApp = () => {
+  const { t } = useT();
   const [activeTab, setActiveTab] = useState('home');
   const [scrollY, setScrollY] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +66,8 @@ const SmartFarmerApp = () => {
   const [selectedPestCrop, setSelectedPestCrop] = useState('');
   const [selectedSymptom, setSelectedSymptom] = useState('');
   const [pestSolution, setPestSolution] = useState(null);
+  const [selectedLivestock, setSelectedLivestock] = useState(null);
+  const [showAIPestDetection, setShowAIPestDetection] = useState(false);
 
   const notifications = [
     { id: 1, type: 'reminder', title: 'Weeding Due', message: 'Time to weed your Maize farm', time: '2 hours ago', read: false },
@@ -68,12 +76,13 @@ const SmartFarmerApp = () => {
     { id: 4, type: 'info', title: 'Market Update', message: 'Maize prices increased by 15%', time: '2 days ago', read: true }
   ];
 
+  const { language, changeLanguage } = useT();
   const [settings, setSettings] = useState(() => {
     const savedSettings = storage.loadSettings();
     return savedSettings || {
       notifications: true,
       darkMode: false,
-      language: 'English',
+      language: language || 'English',
       units: 'Metric'
     };
   });
@@ -191,7 +200,7 @@ const SmartFarmerApp = () => {
     },
     'Cassava': {
       'Yellowing leaves': {
-        cause: 'Cassava mosaic disease',
+        cause: 'Cassava mosaic disease or nutrient deficiency',
         solution: 'Remove and destroy infected plants, use resistant varieties',
         prevention: 'Plant disease-free cuttings and control whitefly vectors'
       },
@@ -327,19 +336,19 @@ const SmartFarmerApp = () => {
             <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mx-auto mb-4 flex items-center justify-center animate-bounce">
               <Leaf className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Smart Farmer</h1>
-            <p className="text-gray-600">Your pocket assistant for better planting and profit</p>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('onboarding.title')}</h1>
+            <p className="text-gray-600">{t('onboarding.subtitle')}</p>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Select Your Region</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('onboarding.selectRegion')}</label>
               <select 
                 value={userLocation}
                 onChange={(e) => setUserLocation(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
               >
-                <option value="">Choose location...</option>
+                <option value="">{t('onboarding.chooseLocation')}</option>
                 <option value="northeast">North-East Nigeria</option>
                 <option value="northwest">North-West Nigeria</option>
                 <option value="northcentral">North-Central Nigeria</option>
@@ -350,19 +359,23 @@ const SmartFarmerApp = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Farming Type</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">{t('onboarding.farmingType')}</label>
               <div className="grid grid-cols-3 gap-3">
-                {['Crop', 'Livestock', 'Mixed'].map((type) => (
+                {[
+                  { key: 'crop', label: t('onboarding.crop') },
+                  { key: 'livestock', label: t('onboarding.livestock') },
+                  { key: 'mixed', label: t('onboarding.mixed') }
+                ].map((type) => (
                   <button
-                    key={type}
-                    onClick={() => setFarmingType(type.toLowerCase())}
+                    key={type.key}
+                    onClick={() => setFarmingType(type.key)}
                     className={`py-3 rounded-xl font-medium transition-all ${
-                      farmingType === type.toLowerCase()
+                      farmingType === type.key
                         ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg scale-105'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    {type}
+                    {type.label}
                   </button>
                 ))}
               </div>
@@ -373,13 +386,13 @@ const SmartFarmerApp = () => {
                 if (userLocation && farmingType) {
                   setShowOnboarding(false);
                   storage.savePrefs({ location: userLocation, farmingType });
-                  showToast.success('Welcome to Smart Farmer! 🌱');
+                  showToast.success(t('common.welcome'));
                 }
               }}
               disabled={!userLocation || !farmingType}
               className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
             >
-              Get Started
+              {t('common.getStarted')}
             </button>
           </div>
         </div>
@@ -446,8 +459,8 @@ const SmartFarmerApp = () => {
             Back to App
           </button>
           <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Weather Updates</h1>
-            <p className="text-gray-600 mb-8">Stay informed about weather conditions for better farming decisions</p>
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">{t('weather.title')}</h1>
+            <p className="text-gray-600 mb-8">{t('weather.subtitle')}</p>
             
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-6 rounded-2xl text-white">
@@ -508,8 +521,8 @@ const SmartFarmerApp = () => {
             Back to App
           </button>
           <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Market Prices</h1>
-            <p className="text-gray-600 mb-8">Current market prices for major crops</p>
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">{t('market.title')}</h1>
+            <p className="text-gray-600 mb-8">{t('market.subtitle')}</p>
             
             <div className="grid md:grid-cols-3 gap-4">
               {[
@@ -565,8 +578,8 @@ const SmartFarmerApp = () => {
             Back to App
           </button>
           <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Farming Tips</h1>
-            <p className="text-gray-600 mb-8">Expert advice for successful farming</p>
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">{t('tips.title')}</h1>
+            <p className="text-gray-600 mb-8">{t('tips.subtitle')}</p>
             
             <div className="grid md:grid-cols-2 gap-6">
               {[
@@ -665,8 +678,8 @@ const SmartFarmerApp = () => {
             Back to App
           </button>
           <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Community Forum</h1>
-            <p className="text-gray-600 mb-8">Connect with fellow farmers and share experiences</p>
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">{t('forum.title')}</h1>
+            <p className="text-gray-600 mb-8">{t('forum.subtitle')}</p>
             
             <div className="space-y-4">
               {[
@@ -746,8 +759,8 @@ const SmartFarmerApp = () => {
             Back to App
           </button>
           <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">Help Center</h1>
-            <p className="text-gray-600 mb-8">Find answers to common questions</p>
+            <h1 className="text-4xl font-bold text-gray-800 mb-6">{t('help.title')}</h1>
+            <p className="text-gray-600 mb-8">{t('help.subtitle')}</p>
             
             <div className="grid md:grid-cols-2 gap-6">
               <div>
@@ -824,17 +837,23 @@ const SmartFarmerApp = () => {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-gray-800">Smart Farmer</h1>
-                <p className="text-xs text-gray-600">{userLocation.replace(/^\w/, c => c.toUpperCase())} Region</p>
+                <p className="text-xs text-gray-600">{userLocation ? userLocation.replace(/^\w/, c => c.toUpperCase()) + ' ' + t('settings.region') : ''}</p>
               </div>
             </div>
 
             <nav className="hidden md:flex items-center space-x-6">
               {[
-                { name: 'Home', icon: Home, tab: 'home' },
-                { name: 'Guide', icon: BookOpen, tab: 'guide' },
-                { name: 'Calendar', icon: Calendar, tab: 'calendar' },
-                { name: 'Tracker', icon: Leaf, tab: 'tracker' },
-                { name: 'Pest', icon: Bug, tab: 'pest' }
+                { name: t('nav.home'), icon: Home, tab: 'home' },
+                { name: t('nav.guide'), icon: BookOpen, tab: 'guide' },
+                { name: t('nav.calendar'), icon: Calendar, tab: 'calendar' },
+                { name: t('nav.tracker'), icon: Leaf, tab: 'tracker' },
+                { name: t('nav.pest'), icon: Bug, tab: 'pest' },
+                ...(farmingType === 'livestock' || farmingType === 'mixed' ? [
+                  { name: t('nav.livestock'), icon: Heart, tab: 'livestock' }
+                ] : []),
+                ...(farmingType === 'mixed' ? [
+                  { name: t('nav.mixed'), icon: Sparkles, tab: 'mixed' }
+                ] : [])
               ].map((item) => (
                 <button
                   key={item.tab}
@@ -858,7 +877,13 @@ const SmartFarmerApp = () => {
                   { name: 'Guide', icon: BookOpen, tab: 'guide' },
                   { name: 'Calendar', icon: Calendar, tab: 'calendar' },
                   { name: 'Tracker', icon: Leaf, tab: 'tracker' },
-                  { name: 'Pest', icon: Bug, tab: 'pest' }
+                  { name: 'Pest', icon: Bug, tab: 'pest' },
+                  ...(farmingType === 'livestock' || farmingType === 'mixed' ? [
+                    { name: 'Livestock', icon: Heart, tab: 'livestock' }
+                  ] : []),
+                  ...(farmingType === 'mixed' ? [
+                    { name: 'Mixed', icon: Sparkles, tab: 'mixed' }
+                  ] : [])
                 ].map((item) => (
                   <button
                     key={item.tab}
@@ -901,7 +926,7 @@ const SmartFarmerApp = () => {
             <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-2xl transform hover:scale-[1.02] transition-all">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-sm opacity-90">Today's Weather</p>
+                  <p className="text-sm opacity-90">{t('home.todaysWeather')}</p>
                   <h2 className="text-4xl font-bold">{weatherData.temp}</h2>
                   <p className="text-sm opacity-90 mt-1">{weatherData.condition}</p>
                 </div>
@@ -921,10 +946,16 @@ const SmartFarmerApp = () => {
 
             <div className="grid grid-cols-2 gap-4">
               {[
-                { name: 'Crop Guide', icon: BookOpen, tab: 'guide', color: 'from-green-500 to-emerald-600' },
-                { name: 'Calendar', icon: Calendar, tab: 'calendar', color: 'from-orange-500 to-amber-600' },
-                { name: 'Farm Tracker', icon: Leaf, tab: 'tracker', color: 'from-purple-500 to-violet-600' },
-                { name: 'Pest Tips', icon: Bug, tab: 'pest', color: 'from-red-500 to-pink-600' }
+                { name: t('home.cropGuide'), icon: BookOpen, tab: 'guide', color: 'from-green-500 to-emerald-600' },
+                { name: t('home.calendar'), icon: Calendar, tab: 'calendar', color: 'from-orange-500 to-amber-600' },
+                { name: t('home.farmTracker'), icon: Leaf, tab: 'tracker', color: 'from-purple-500 to-violet-600' },
+                { name: t('home.pestTips'), icon: Bug, tab: 'pest', color: 'from-red-500 to-pink-600' },
+                ...(farmingType === 'livestock' || farmingType === 'mixed' ? [
+                  { name: t('nav.livestock'), icon: Heart, tab: 'livestock', color: 'from-blue-500 to-indigo-600' }
+                ] : []),
+                ...(farmingType === 'mixed' ? [
+                  { name: t('nav.mixed'), icon: Sparkles, tab: 'mixed', color: 'from-teal-500 to-cyan-600' }
+                ] : [])
               ].map((action) => (
                 <button
                   key={action.name}
@@ -939,12 +970,12 @@ const SmartFarmerApp = () => {
 
             <div className="bg-white rounded-3xl p-6 shadow-xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-800">Active Crops</h3>
+                <h3 className="text-xl font-bold text-gray-800">{t('home.activeCrops')}</h3>
                 <button 
                   onClick={() => setActiveTab('tracker')}
                   className="text-green-600 text-sm font-semibold"
                 >
-                  View All
+                  {t('common.viewAll')}
                 </button>
               </div>
               <div className="space-y-3">
@@ -960,8 +991,7 @@ const SmartFarmerApp = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-green-600">{log.daysLeft} days</p>
-                      <p className="text-xs text-gray-500">to harvest</p>
+                      <p className="text-sm font-semibold text-green-600">{log.daysLeft} {t('home.daysToHarvest')}</p>
                     </div>
                   </div>
                 ))}
@@ -973,15 +1003,15 @@ const SmartFarmerApp = () => {
         {activeTab === 'guide' && (
           <div className="animate-fadeIn">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">Crop Guide</h2>
-              <p className="text-gray-600">Discover the best crops for your region</p>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('guide.title')}</h2>
+              <p className="text-gray-600">{t('guide.subtitle')}</p>
             </div>
 
             <div className="relative mb-6">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search crops..."
+                placeholder={t('guide.searchCrops')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl shadow-lg focus:shadow-xl transition-all focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -1015,21 +1045,21 @@ const SmartFarmerApp = () => {
                   </div>
                   <div className="space-y-4">
                     <div className="bg-green-50 p-4 rounded-2xl">
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Planting Months</p>
+                      <p className="text-sm font-semibold text-gray-700 mb-1">{t('guide.plantingMonths')}</p>
                       <p className="text-green-600 font-semibold">{selectedCrop.plantingMonths.join(', ')}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-blue-50 p-4 rounded-2xl">
-                        <p className="text-sm font-semibold text-gray-700 mb-1">Harvest Time</p>
+                        <p className="text-sm font-semibold text-gray-700 mb-1">{t('guide.harvestTime')}</p>
                         <p className="text-blue-600 font-semibold">{selectedCrop.harvestTime}</p>
                       </div>
                       <div className="bg-purple-50 p-4 rounded-2xl">
-                        <p className="text-sm font-semibold text-gray-700 mb-1">Yield</p>
+                        <p className="text-sm font-semibold text-gray-700 mb-1">{t('guide.yield')}</p>
                         <p className="text-purple-600 font-semibold">{selectedCrop.yield}</p>
                       </div>
                     </div>
                     <div className="bg-orange-50 p-4 rounded-2xl">
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Soil Type</p>
+                      <p className="text-sm font-semibold text-gray-700 mb-1">{t('guide.soilType')}</p>
                       <p className="text-orange-600 font-semibold">{selectedCrop.soilType}</p>
                     </div>
                   </div>
@@ -1037,7 +1067,7 @@ const SmartFarmerApp = () => {
                     onClick={() => setSelectedCrop(null)}
                     className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
-                    Close
+                    {t('common.close')}
                   </button>
                 </div>
               </div>
@@ -1048,8 +1078,8 @@ const SmartFarmerApp = () => {
         {activeTab === 'calendar' && (
           <div className="animate-fadeIn">
             <div className="mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Planting Calendar</h2>
-              <p className="text-sm sm:text-base text-gray-600">Plan your farming activities</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">{t('calendar.title')}</h2>
+              <p className="text-sm sm:text-base text-gray-600">{t('calendar.subtitle')}</p>
             </div>
 
             {isLoading ? (
@@ -1074,7 +1104,7 @@ const SmartFarmerApp = () => {
                       )}
                     </div>
                     {recommendedCrops.length === 0 && (
-                      <p className="text-sm text-gray-400">No recommendations</p>
+                      <p className="text-sm text-gray-400">{t('calendar.noRecommendations')}</p>
                     )}
                   </button>
                 );
@@ -1101,7 +1131,7 @@ const SmartFarmerApp = () => {
                     onClick={() => setSelectedMonth(null)}
                     className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
-                    Close
+                    {t('common.close')}
                   </button>
                 </div>
               </div>
@@ -1112,25 +1142,25 @@ const SmartFarmerApp = () => {
         {activeTab === 'tracker' && (
           <div className="animate-fadeIn">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">Farm Tracker</h2>
-              <p className="text-gray-600">Monitor your farming activities</p>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('tracker.title')}</h2>
+              <p className="text-gray-600">{t('tracker.subtitle')}</p>
             </div>
 
             <button className="w-full mb-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2" onClick={() => setShowAddLogModal(true)}>
               <Plus className="w-5 h-5" />
-              <span>Add New Log</span>
+              <span>{t('tracker.addNewLog')}</span>
             </button>
 
             <div className="space-y-4">
               {farmLogs.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-2xl shadow-lg">
                   <Leaf className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-4">No farm logs yet</p>
+                  <p className="text-gray-500 mb-4">{t('tracker.noLogs')}</p>
                   <button 
                     onClick={() => setShowAddLogModal(true)}
                     className="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all"
                   >
-                    Add Your First Log
+                    {t('tracker.addFirstLog')}
                   </button>
                 </div>
               ) : (
@@ -1143,7 +1173,7 @@ const SmartFarmerApp = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-gray-800">{log.crop}</h3>
-                        <p className="text-sm text-gray-600">Planted: {new Date(log.datePlanted).toLocaleDateString()}</p>
+                        <p className="text-sm text-gray-600">{t('tracker.planted')}: {new Date(log.datePlanted).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
@@ -1156,7 +1186,7 @@ const SmartFarmerApp = () => {
                       style={{width: `${((90 - log.daysLeft) / 90) * 100}%`}}
                     />
                   </div>
-                  <p className="text-sm text-gray-600 text-right">{log.daysLeft} days remaining</p>
+                  <p className="text-sm text-gray-600 text-right">{log.daysLeft} {t('tracker.daysRemaining')}</p>
                 </div>
               ))
               )}
@@ -1167,12 +1197,20 @@ const SmartFarmerApp = () => {
         {activeTab === 'pest' && (
           <div className="animate-fadeIn">
             <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">Pest & Disease Tips</h2>
-              <p className="text-gray-600">Identify and solve crop problems</p>
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('pest.title')}</h2>
+              <p className="text-gray-600">{t('pest.subtitle')}</p>
+            </div>
+
+            <div className="mb-6">
+              <AIPestDetection 
+                onPestDetected={(pestName, confidence) => {
+                  showToast.success(`Pest detected: ${pestName} (${confidence}% confidence)`);
+                }}
+              />
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-lg mb-6">
-              <h3 className="font-bold text-gray-800 mb-4">Quick Diagnosis</h3>
+              <h3 className="font-bold text-gray-800 mb-4">{t('pest.manualDiagnosis')}</h3>
               <div className="space-y-4">
                 <select 
                   value={selectedPestCrop}
@@ -1183,7 +1221,7 @@ const SmartFarmerApp = () => {
                   }}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
                 >
-                  <option value="">Select crop...</option>
+                  <option value="">{t('pest.selectCrop')}</option>
                   {crops.map((crop, idx) => (
                     <option key={idx} value={crop.name}>{crop.name}</option>
                   ))}
@@ -1198,7 +1236,7 @@ const SmartFarmerApp = () => {
                   disabled={!selectedPestCrop}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
-                  <option value="">Select symptom...</option>
+                  <option value="">{t('pest.selectSymptom')}</option>
                   {selectedPestCrop && pestDatabase[selectedPestCrop] && 
                     Object.keys(pestDatabase[selectedPestCrop]).map((symptom, idx) => (
                       <option key={idx} value={symptom}>{symptom}</option>
@@ -1221,18 +1259,18 @@ const SmartFarmerApp = () => {
                         <Bug className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-bold text-gray-800 text-lg mb-2">Diagnosis Result</h4>
+                        <h4 className="font-bold text-gray-800 text-lg mb-2">{t('pest.diagnosisResult')}</h4>
                         <div className="space-y-3">
                           <div>
-                            <p className="text-sm font-semibold text-gray-700 mb-1">🔍 Cause:</p>
+                            <p className="text-sm font-semibold text-gray-700 mb-1">🔍 {t('pest.cause')}:</p>
                             <p className="text-gray-800">{pestSolution.cause}</p>
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-gray-700 mb-1">💊 Solution:</p>
+                            <p className="text-sm font-semibold text-gray-700 mb-1">💊 {t('pest.solution')}:</p>
                             <p className="text-gray-800">{pestSolution.solution}</p>
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-gray-700 mb-1">🛡️ Prevention:</p>
+                            <p className="text-sm font-semibold text-gray-700 mb-1">🛡️ {t('pest.prevention')}:</p>
                             <p className="text-gray-800">{pestSolution.prevention}</p>
                           </div>
                         </div>
@@ -1244,7 +1282,7 @@ const SmartFarmerApp = () => {
             </div>
 
             <div className="grid gap-4">
-              <h3 className="font-bold text-gray-800 text-lg">Common Issues</h3>
+              <h3 className="font-bold text-gray-800 text-lg">{t('pest.commonIssues')}</h3>
               {[
                 { title: 'Armyworm on Maize', symptom: 'Holes in leaves', solution: 'Apply neem-based pesticide' },
                 { title: 'Tomato Blight', symptom: 'Brown spots', solution: 'Remove affected plants' },
@@ -1252,7 +1290,7 @@ const SmartFarmerApp = () => {
               ].map((pest, idx) => (
                 <div key={idx} className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <h3 className="font-bold text-gray-800 mb-2">{pest.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">Symptom: {pest.symptom}</p>
+                  <p className="text-sm text-gray-600 mb-3">{t('pest.symptom')}: {pest.symptom}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-green-600">{pest.solution}</span>
                     <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -1262,7 +1300,334 @@ const SmartFarmerApp = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'livestock' && (
+          <div className="animate-fadeIn">
+            <div className="mb-6">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('livestock.title')}</h2>
+              <p className="text-gray-600">{t('livestock.subtitle')}</p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+              {livestockTypes.map((livestock, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedLivestock(livestock)}
+                  className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all text-left"
+                >
+                  <div className="text-5xl mb-3">{livestock.icon}</div>
+                  <h3 className="font-bold text-gray-800 mb-1">{livestock.name}</h3>
+                  <p className="text-sm text-gray-600">{livestock.category}</p>
+                  <div className="mt-3 flex items-center text-green-600 text-sm font-semibold">
+                    <span>Learn more</span>
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {selectedLivestock && (
+              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedLivestock(null)}>
+                <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-4xl w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                  <div className="text-center mb-6">
+                    <div className="text-6xl mb-4">{selectedLivestock.icon}</div>
+                    <h2 className="text-3xl font-bold text-gray-800">{selectedLivestock.name}</h2>
+                    <p className="text-gray-600">{selectedLivestock.category}</p>
+                  </div>
+
+                  <div className="space-y-6">
+                    {selectedLivestock.breeds && (
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">{t('livestock.breeds')}</h3>
+                        <div className="space-y-3">
+                          {selectedLivestock.breeds.map((breed, idx) => (
+                            <div key={idx} className="bg-green-50 p-4 rounded-xl border border-green-200">
+                              <h4 className="font-bold text-gray-800 mb-2">{breed.name}</h4>
+                              <p className="text-sm text-gray-700 mb-2">{breed.characteristics}</p>
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                {breed.weight && <p><span className="font-semibold">{t('livestock.weight')}:</span> {breed.weight}</p>}
+                                {breed.milkYield && <p><span className="font-semibold">{t('livestock.milk')}:</span> {breed.milkYield}</p>}
+                                {breed.gestation && <p><span className="font-semibold">{t('livestock.gestation')}:</span> {breed.gestation}</p>}
+                                {breed.suitability && <p><span className="font-semibold">{t('livestock.suitable')}:</span> {breed.suitability}</p>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedLivestock.housing && (
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">{t('livestock.housingRequirements')}</h3>
+                        <div className="bg-blue-50 p-4 rounded-xl">
+                          <p className="font-semibold text-gray-800 mb-2">{t('livestock.space')}: {selectedLivestock.housing.space}</p>
+                          <ul className="space-y-1">
+                            {selectedLivestock.housing.requirements.map((req, idx) => (
+                              <li key={idx} className="text-sm text-gray-700 flex items-start">
+                                <span className="text-blue-600 mr-2">•</span>
+                                <span>{req}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedLivestock.feeding && (
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">{t('livestock.feeding')}</h3>
+                        <div className="bg-yellow-50 p-4 rounded-xl mb-3">
+                          <h4 className="font-semibold text-gray-800 mb-2">{t('livestock.dailyRequirements')}:</h4>
+                          <ul className="space-y-1">
+                            {selectedLivestock.feeding.daily.map((item, idx) => (
+                              <li key={idx} className="text-sm text-gray-700 flex items-start">
+                                <span className="text-yellow-600 mr-2">•</span>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="bg-green-50 p-4 rounded-xl">
+                          <h4 className="font-semibold text-gray-800 mb-2">{t('livestock.tips')}:</h4>
+                          <ul className="space-y-1">
+                            {selectedLivestock.feeding.tips.map((tip, idx) => (
+                              <li key={idx} className="text-sm text-gray-700 flex items-start">
+                                <span className="text-green-600 mr-2">✓</span>
+                                <span>{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedLivestock.health && (
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">{t('livestock.healthManagement')}</h3>
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-semibold text-gray-800 mb-2">{t('livestock.commonDiseases')}:</h4>
+                            {selectedLivestock.health.commonDiseases.map((disease, idx) => (
+                              <div key={idx} className="bg-red-50 p-4 rounded-xl mb-3 border border-red-200">
+                                <h5 className="font-bold text-gray-800 mb-1">{disease.name}</h5>
+                                <p className="text-sm text-gray-700 mb-2"><strong>{t('livestock.symptoms')}:</strong> {disease.symptoms}</p>
+                                <p className="text-sm text-gray-700 mb-2"><strong>{t('livestock.treatment')}:</strong> {disease.treatment}</p>
+                                <p className="text-sm text-gray-700"><strong>{t('livestock.prevention')}:</strong> {disease.prevention}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="bg-purple-50 p-4 rounded-xl">
+                            <h4 className="font-semibold text-gray-800 mb-2">{t('livestock.vaccinationSchedule')}:</h4>
+                            <ul className="space-y-1">
+                              {selectedLivestock.health.vaccination.map((vaccine, idx) => (
+                                <li key={idx} className="text-sm text-gray-700 flex items-start">
+                                  <span className="text-purple-600 mr-2">•</span>
+                                  <span>{vaccine}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedLivestock.economics && (
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">{t('livestock.economics')}</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-green-50 p-4 rounded-xl">
+                            <p className="text-sm text-gray-600">{t('livestock.initialCost')}</p>
+                            <p className="font-bold text-green-600">{selectedLivestock.economics.initialCost}</p>
+                          </div>
+                          <div className="bg-blue-50 p-4 rounded-xl">
+                            <p className="text-sm text-gray-600">{t('livestock.monthlyFeedCost')}</p>
+                            <p className="font-bold text-blue-600">{selectedLivestock.economics.feedCost}</p>
+                          </div>
+                          {selectedLivestock.economics.milkValue && (
+                            <div className="bg-yellow-50 p-4 rounded-xl">
+                              <p className="text-sm text-gray-600">{t('livestock.milkValue')}</p>
+                              <p className="font-bold text-yellow-600">{selectedLivestock.economics.milkValue}</p>
+                            </div>
+                          )}
+                          <div className="bg-purple-50 p-4 rounded-xl">
+                            <p className="text-sm text-gray-600">{t('livestock.profitMargin')}</p>
+                            <p className="font-bold text-purple-600">{selectedLivestock.economics.profitMargin}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedLivestock(null)}
+                    className="w-full mt-6 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                  >
+                    {t('common.close')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'mixed' && (
+          <div className="animate-fadeIn">
+            <div className="mb-6">
+              <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('mixed.title')}</h2>
+              <p className="text-gray-600">{t('mixed.subtitle')}</p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border-2 border-green-200">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">{t('mixed.benefits')}</h3>
+                <ul className="grid md:grid-cols-2 gap-3">
+                  {[
+                    'Livestock provide manure for crops',
+                    'Crop residues feed livestock',
+                    'Diversified income sources',
+                    'Better resource utilization',
+                    'Reduced risk of total loss',
+                    'Sustainable farming practices'
+                  ].map((benefit, idx) => (
+                    <li key={idx} className="flex items-start space-x-2 text-sm text-gray-700">
+                      <span className="text-green-600 font-bold mt-1">✓</span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">{t('mixed.systems')}</h3>
+                <div className="space-y-4">
+                  {mixedFarmingSystems.map((system, idx) => (
+                    <div key={idx} className="bg-white p-6 rounded-2xl shadow-lg">
+                      <h4 className="font-bold text-gray-800 text-lg mb-2">{system.name}</h4>
+                      <p className="text-sm text-gray-600 mb-4">{system.description}</p>
+                      <div className="mb-4">
+                        <h5 className="font-semibold text-gray-800 mb-2">Benefits:</h5>
+                        <ul className="space-y-1">
+                          {system.benefits.map((benefit, i) => (
+                            <li key={i} className="text-sm text-gray-700 flex items-start">
+                              <span className="text-green-600 mr-2">•</span>
+                              <span>{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-gray-800 mb-2">{t('mixed.examples')}:</h5>
+                        {system.examples.map((example, i) => (
+                          <div key={i} className="bg-gray-50 p-3 rounded-xl mb-2">
+                            <p className="text-sm text-gray-700">
+                              <strong>{t('mixed.crops')}:</strong> {example.crops.join(', ')}
+                            </p>
+                            <p className="text-sm text-gray-700">
+                              <strong>{t('nav.livestock')}:</strong> {example.livestock.join(', ')}
+                            </p>
+                            <p className="text-sm text-gray-700 mt-1">
+                              <strong>{t('mixed.integration')}:</strong> {example.integration}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">{t('mixed.practices')}</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {integratedPractices.map((practice, idx) => (
+                    <div key={idx} className="bg-white p-6 rounded-2xl shadow-lg">
+                      <h4 className="font-bold text-gray-800 mb-2">{practice.practice}</h4>
+                      <p className="text-sm text-gray-600 mb-4">{practice.description}</p>
+                      <div className="mb-4">
+                        <h5 className="font-semibold text-gray-800 mb-2 text-sm">{t('mixed.steps')}:</h5>
+                        <ol className="space-y-1 list-decimal list-inside text-sm text-gray-700">
+                          {practice.steps.map((step, i) => (
+                            <li key={i}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-gray-800 mb-2 text-sm">Benefits:</h5>
+                        <ul className="space-y-1">
+                          {practice.benefits.map((benefit, i) => (
+                            <li key={i} className="text-sm text-gray-700 flex items-start">
+                              <span className="text-green-600 mr-2">✓</span>
+                              <span>{benefit}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">{t('mixed.seasonalPlanning')}</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {Object.entries(seasonalPlanning).map(([season, activities]) => (
+                    <div key={season} className="bg-white p-6 rounded-2xl shadow-lg">
+                      <h4 className="font-bold text-gray-800 mb-4">{season}</h4>
+                      <div className="space-y-4">
+                        <div>
+                          <h5 className="font-semibold text-gray-800 mb-2 text-sm">{t('mixed.crops')}:</h5>
+                          <ul className="space-y-1">
+                            {activities.crops.map((activity, i) => (
+                              <li key={i} className="text-sm text-gray-700 flex items-start">
+                                <span className="text-green-600 mr-2">🌾</span>
+                                <span>{activity}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-gray-800 mb-2 text-sm">{t('nav.livestock')}:</h5>
+                          <ul className="space-y-1">
+                            {activities.livestock.map((activity, i) => (
+                              <li key={i} className="text-sm text-gray-700 flex items-start">
+                                <span className="text-blue-600 mr-2">🐄</span>
+                                <span>{activity}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-gray-800 mb-2 text-sm">{t('mixed.integration')}:</h5>
+                          <ul className="space-y-1">
+                            {activities.integration.map((activity, i) => (
+                              <li key={i} className="text-sm text-gray-700 flex items-start">
+                                <span className="text-purple-600 mr-2">🔗</span>
+                                <span>{activity}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
+
+      <VoiceNavigation 
+        onNavigate={(tab) => {
+          setActiveTab(tab);
+          if (tab === 'settings') setShowSettings(true);
+          if (tab === 'help') setShowHelpCenter(true);
+        }}
+        onCommand={(command) => {
+          // Handle custom voice commands
+          console.log('Voice command:', command);
+        }}
+      />
 
       <footer className="bg-gradient-to-br from-green-800 via-emerald-900 to-teal-900 text-white mt-20">
         <div className="max-w-7xl mx-auto px-4 py-12">
@@ -1421,7 +1786,7 @@ const SmartFarmerApp = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-800 flex items-center">
                 <Bell className="w-6 h-6 mr-2 text-green-600" />
-                Notifications
+                {t('notifications.title')}
               </h2>
               <button onClick={() => setShowNotifications(false)} className="p-2 hover:bg-gray-100 rounded-full transition-all">
                 <X className="w-6 h-6" />
@@ -1461,7 +1826,7 @@ const SmartFarmerApp = () => {
               onClick={() => setShowNotifications(false)}
               className="w-full mt-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all"
             >
-              Close
+              {t('common.close')}
             </button>
           </div>
         </div>
