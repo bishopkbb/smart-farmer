@@ -720,6 +720,716 @@ export const livestockTypes = [
       meatValue: '₦2,000 - ₦3,000 per kg',
       profitMargin: '50-60% with good management'
     }
+  },
+  {
+    name: 'Ducks',
+    icon: '🦆',
+    category: 'Poultry',
+    breeds: [
+      {
+        name: 'Muscovy',
+        characteristics: 'Large, good for meat, less noisy',
+        suitability: 'All regions',
+        weight: '3-5kg',
+        eggProduction: '60-100 eggs/year',
+        incubation: '35 days'
+      },
+      {
+        name: 'Pekin',
+        characteristics: 'White, good for meat and eggs',
+        suitability: 'All regions',
+        weight: '2.5-4kg',
+        eggProduction: '150-200 eggs/year',
+        incubation: '28 days'
+      },
+      {
+        name: 'Khaki Campbell',
+        characteristics: 'Excellent egg layers',
+        suitability: 'All regions',
+        weight: '2-3kg',
+        eggProduction: '250-300 eggs/year',
+        incubation: '28 days'
+      }
+    ],
+    housing: {
+      space: '0.5-1 sq meter per bird',
+      requirements: [
+        'Water access for swimming',
+        'Shelter from rain and predators',
+        'Nesting boxes',
+        'Secure fencing',
+        'Access to pond or water container'
+      ]
+    },
+    feeding: {
+      daily: [
+        'Layer feed: 120-150g per bird',
+        'Clean water: Always available',
+        'Greens and vegetables',
+        'Insects and small fish (if available)'
+      ],
+      tips: [
+        'Provide constant access to water',
+        'Feed 2-3 times daily',
+        'Supplement with kitchen scraps',
+        'Allow access to pond or water for swimming',
+        'Provide grit for digestion'
+      ]
+    },
+    health: {
+      commonDiseases: [
+        {
+          name: 'Duck Plague',
+          symptoms: 'High mortality, diarrhea, nasal discharge',
+          treatment: 'Vaccination, supportive care',
+          prevention: 'Vaccination at 2-3 weeks'
+        },
+        {
+          name: 'Botulism',
+          symptoms: 'Paralysis, weakness',
+          treatment: 'Antitoxin, supportive care',
+          prevention: 'Keep water clean, remove dead animals'
+        },
+        {
+          name: 'Aspergillosis',
+          symptoms: 'Respiratory issues, weakness',
+          treatment: 'Antifungal medication',
+          prevention: 'Keep bedding dry, good ventilation'
+        }
+      ],
+      vaccination: [
+        'Duck Plague: At 2-3 weeks',
+        'Newcastle: Every 3 months',
+        'Avian Influenza: As recommended'
+      ]
+    },
+    breeding: {
+      age: '20-24 weeks for first eggs',
+      cycle: 'Daily (layers)',
+      signs: 'Nesting behavior, egg laying',
+      incubation: '28-35 days depending on breed',
+      care: [
+        'Provide nesting boxes',
+        'Collect eggs daily',
+        'Maintain proper lighting',
+        'Keep nesting area clean'
+      ]
+    },
+    management: {
+      daily: [
+        'Check health and behavior',
+        'Provide feed and water',
+        'Collect eggs',
+        'Clean water containers',
+        'Observe for signs of illness'
+      ],
+      weekly: [
+        'Deep clean housing',
+        'Check for parasites',
+        'Monitor egg production',
+        'Inspect equipment'
+      ],
+      monthly: [
+        'Vaccination schedule',
+        'Health check',
+        'Record keeping'
+      ]
+    },
+    economics: {
+      initialCost: '₦1,000 - ₦3,000 per bird',
+      feedCost: '₦200 - ₦400 per bird per month',
+      eggValue: '₦60 - ₦120 per egg',
+      meatValue: '₦2,000 - ₦4,000 per bird',
+      profitMargin: '45-55% with good management'
+    }
+  },
+  {
+    name: 'Turkeys',
+    icon: '🦃',
+    category: 'Poultry',
+    breeds: [
+      {
+        name: 'Broad Breasted White',
+        characteristics: 'Large, fast growing, good for meat',
+        suitability: 'All regions',
+        weight: '8-15kg (males), 5-8kg (females)',
+        eggProduction: '80-100 eggs/year',
+        incubation: '28 days'
+      },
+      {
+        name: 'Bronze',
+        characteristics: 'Hardy, good for meat',
+        suitability: 'All regions',
+        weight: '10-18kg (males), 6-10kg (females)',
+        eggProduction: '60-80 eggs/year',
+        incubation: '28 days'
+      },
+      {
+        name: 'Local (Nigerian)',
+        characteristics: 'Hardy, disease resistant',
+        suitability: 'All regions',
+        weight: '5-10kg (males), 3-6kg (females)',
+        eggProduction: '50-70 eggs/year',
+        incubation: '28 days'
+      }
+    ],
+    housing: {
+      space: '1-2 sq meters per bird',
+      requirements: [
+        'Well-ventilated coop',
+        'Raised floor or deep litter',
+        'Nesting boxes',
+        'Perches',
+        'Secure from predators',
+        'Access to outdoor run'
+      ]
+    },
+    feeding: {
+      daily: [
+        'Starter feed (0-8 weeks): Ad libitum',
+        'Grower feed (8-16 weeks): 200-300g per bird',
+        'Breeder feed (16+ weeks): 250-350g per bird',
+        'Clean water: Always available',
+        'Grit and calcium supplements'
+      ],
+      tips: [
+        'Feed 2-3 times daily',
+        'Provide constant access to water',
+        'Use feeders to reduce waste',
+        'Supplement with greens',
+        'Provide adequate space for feeding'
+      ]
+    },
+    health: {
+      commonDiseases: [
+        {
+          name: 'Blackhead Disease',
+          symptoms: 'Yellow droppings, listlessness',
+          treatment: 'Antibiotics, supportive care',
+          prevention: 'Keep separate from chickens, good hygiene'
+        },
+        {
+          name: 'Newcastle Disease',
+          symptoms: 'Respiratory issues, nervous signs',
+          treatment: 'Vaccination, supportive care',
+          prevention: 'Regular vaccination every 3 months'
+        },
+        {
+          name: 'Fowl Pox',
+          symptoms: 'Lesions on head and body',
+          treatment: 'Vaccination, supportive care',
+          prevention: 'Vaccination at 6-8 weeks'
+        }
+      ],
+      vaccination: [
+        'Newcastle: Every 3 months',
+        'Fowl Pox: Once at 6-8 weeks',
+        'Blackhead: Preventive medication'
+      ]
+    },
+    breeding: {
+      age: '28-32 weeks for first breeding',
+      cycle: 'Seasonal (spring/summer)',
+      signs: 'Strutting, gobbling, nesting behavior',
+      incubation: '28 days',
+      care: [
+        'Provide nesting boxes',
+        'Collect eggs daily',
+        'Maintain proper lighting',
+        'Keep nesting area clean'
+      ]
+    },
+    management: {
+      daily: [
+        'Check health and behavior',
+        'Provide feed and water',
+        'Collect eggs',
+        'Clean water containers',
+        'Observe for signs of illness'
+      ],
+      weekly: [
+        'Deep clean housing',
+        'Check for parasites',
+        'Monitor egg production',
+        'Inspect equipment'
+      ],
+      monthly: [
+        'Vaccination schedule',
+        'Health check',
+        'Record keeping'
+      ]
+    },
+    economics: {
+      initialCost: '₦2,000 - ₦5,000 per bird',
+      feedCost: '₦500 - ₦1,000 per bird per month',
+      eggValue: '₦100 - ₦200 per egg',
+      meatValue: '₦5,000 - ₦15,000 per bird',
+      profitMargin: '40-50% with good management'
+    }
+  },
+  {
+    name: 'Guinea Fowl',
+    icon: '🐦',
+    category: 'Poultry',
+    breeds: [
+      {
+        name: 'Helmeted Guinea Fowl',
+        characteristics: 'Hardy, good for meat and eggs',
+        suitability: 'All regions',
+        weight: '1.5-2kg',
+        eggProduction: '80-120 eggs/year',
+        incubation: '26-28 days'
+      },
+      {
+        name: 'Local (Nigerian)',
+        characteristics: 'Very hardy, disease resistant',
+        suitability: 'All regions',
+        weight: '1-1.5kg',
+        eggProduction: '60-100 eggs/year',
+        incubation: '26-28 days'
+      }
+    ],
+    housing: {
+      space: '0.5-1 sq meter per bird',
+      requirements: [
+        'Secure coop (they can fly)',
+        'Raised floor or deep litter',
+        'Nesting boxes',
+        'Perches',
+        'Protection from predators',
+        'Access to outdoor run'
+      ]
+    },
+    feeding: {
+      daily: [
+        'Layer feed: 100-120g per bird',
+        'Clean water: Always available',
+        'Greens and vegetables',
+        'Insects (they forage well)',
+        'Grit supplements'
+      ],
+      tips: [
+        'Allow free-range foraging when possible',
+        'Feed 2 times daily',
+        'Provide constant access to water',
+        'Supplement with kitchen scraps',
+        'They are excellent foragers'
+      ]
+    },
+    health: {
+      commonDiseases: [
+        {
+          name: 'Newcastle Disease',
+          symptoms: 'Respiratory issues, nervous signs',
+          treatment: 'Vaccination, supportive care',
+          prevention: 'Regular vaccination every 3 months'
+        },
+        {
+          name: 'Fowl Pox',
+          symptoms: 'Lesions on head and body',
+          treatment: 'Vaccination, supportive care',
+          prevention: 'Vaccination at 6-8 weeks'
+        },
+        {
+          name: 'Parasites',
+          symptoms: 'Weight loss, poor growth',
+          treatment: 'Deworming, external parasite control',
+          prevention: 'Regular deworming, clean housing'
+        }
+      ],
+      vaccination: [
+        'Newcastle: Every 3 months',
+        'Fowl Pox: Once at 6-8 weeks'
+      ]
+    },
+    breeding: {
+      age: '20-24 weeks for first eggs',
+      cycle: 'Seasonal (rainy season)',
+      signs: 'Nesting behavior, egg laying',
+      incubation: '26-28 days',
+      care: [
+        'Provide nesting boxes',
+        'Collect eggs daily',
+        'Keep nesting area clean',
+        'They are good mothers if allowed to hatch'
+      ]
+    },
+    management: {
+      daily: [
+        'Check health and behavior',
+        'Provide feed and water',
+        'Collect eggs',
+        'Observe for signs of illness'
+      ],
+      weekly: [
+        'Deep clean housing',
+        'Check for parasites',
+        'Monitor egg production'
+      ],
+      monthly: [
+        'Vaccination schedule',
+        'Health check',
+        'Record keeping'
+      ]
+    },
+    economics: {
+      initialCost: '₦1,500 - ₦3,000 per bird',
+      feedCost: '₦200 - ₦350 per bird per month',
+      eggValue: '₦80 - ₦150 per egg',
+      meatValue: '₦2,500 - ₦4,000 per bird',
+      profitMargin: '50-60% with good management'
+    }
+  },
+  {
+    name: 'Fish (Aquaculture)',
+    icon: '🐟',
+    category: 'Aquaculture',
+    breeds: [
+      {
+        name: 'Catfish (Clarias)',
+        characteristics: 'Hardy, fast growing, good for meat',
+        suitability: 'All regions',
+        weight: '1-2kg (harvest size)',
+        growthTime: '4-6 months',
+        waterType: 'Freshwater'
+      },
+      {
+        name: 'Tilapia',
+        characteristics: 'Fast growing, good for meat',
+        suitability: 'All regions',
+        weight: '0.5-1kg (harvest size)',
+        growthTime: '4-5 months',
+        waterType: 'Freshwater'
+      },
+      {
+        name: 'Mudfish',
+        characteristics: 'Very hardy, can survive low oxygen',
+        suitability: 'All regions',
+        weight: '0.5-1.5kg (harvest size)',
+        growthTime: '5-7 months',
+        waterType: 'Freshwater'
+      }
+    ],
+    housing: {
+      space: '1000-2000 fish per cubic meter (depending on size)',
+      requirements: [
+        'Concrete or earthen pond',
+        'Water depth: 1-1.5 meters',
+        'Water quality management',
+        'Aeration system',
+        'Feeding platform',
+        'Drainage system',
+        'Protection from predators'
+      ]
+    },
+    feeding: {
+      daily: [
+        'Commercial fish feed: 3-5% of body weight',
+        'Feed 2-3 times daily',
+        'Supplement with kitchen waste (well-processed)',
+        'Monitor feeding response'
+      ],
+      tips: [
+        'Feed at same times daily',
+        'Adjust feed based on water temperature',
+        'Remove uneaten feed after 30 minutes',
+        'Provide adequate aeration',
+        'Monitor water quality regularly'
+      ]
+    },
+    health: {
+      commonDiseases: [
+        {
+          name: 'Bacterial Infections',
+          symptoms: 'Ulcers, fin rot, lethargy',
+          treatment: 'Antibiotics, water treatment',
+          prevention: 'Good water quality, proper stocking density'
+        },
+        {
+          name: 'Parasites',
+          symptoms: 'Excessive mucus, scratching, weight loss',
+          treatment: 'Antiparasitic medication',
+          prevention: 'Quarantine new fish, good water quality'
+        },
+        {
+          name: 'Fungal Infections',
+          symptoms: 'White cotton-like growth',
+          treatment: 'Antifungal medication, salt bath',
+          prevention: 'Good water quality, reduce stress'
+        }
+      ],
+      vaccination: [
+        'No routine vaccinations',
+        'Focus on water quality and biosecurity'
+      ]
+    },
+    breeding: {
+      age: '6-8 months for first breeding',
+      cycle: 'Continuous (warm water)',
+      signs: 'Spawning behavior, nest building',
+      incubation: '24-48 hours (hatching)',
+      care: [
+        'Provide spawning areas',
+        'Separate breeding stock',
+        'Monitor water quality',
+        'Protect fry from adults'
+      ]
+    },
+    management: {
+      daily: [
+        'Check water quality (pH, temperature, oxygen)',
+        'Feed fish',
+        'Observe fish behavior',
+        'Check for dead fish',
+        'Monitor water level'
+      ],
+      weekly: [
+        'Test water parameters',
+        'Partial water change (10-20%)',
+        'Clean feeding platform',
+        'Check equipment'
+      ],
+      monthly: [
+        'Full water quality test',
+        'Harvest and restock',
+        'Record keeping',
+        'Equipment maintenance'
+      ]
+    },
+    economics: {
+      initialCost: '₦50,000 - ₦200,000 (pond setup)',
+      feedCost: '₦15,000 - ₦30,000 per 1000 fish per month',
+      fingerlingCost: '₦10 - ₦30 per fingerling',
+      meatValue: '₦800 - ₦1,500 per kg',
+      profitMargin: '40-50% with good management'
+    }
+  },
+  {
+    name: 'Snails',
+    icon: '🐌',
+    category: 'Small Animals',
+    breeds: [
+      {
+        name: 'Giant African Land Snail',
+        characteristics: 'Large, fast growing, good for meat',
+        suitability: 'All regions',
+        weight: '150-200g (harvest size)',
+        growthTime: '6-8 months',
+        shellType: 'Large, brown'
+      },
+      {
+        name: 'Achatina Achatina',
+        characteristics: 'Very large, high meat yield',
+        suitability: 'Southern regions',
+        weight: '200-300g (harvest size)',
+        growthTime: '8-10 months',
+        shellType: 'Large, striped'
+      }
+    ],
+    housing: {
+      space: '50-100 snails per square meter',
+      requirements: [
+        'Enclosed pen or container',
+        'Moist soil substrate (10-15cm deep)',
+        'Cover to maintain humidity',
+        'Protection from direct sun',
+        'Good ventilation',
+        'Secure lid (they can escape)'
+      ]
+    },
+    feeding: {
+      daily: [
+        'Fresh vegetables: Cabbage, lettuce, cucumber',
+        'Fruits: Pawpaw, banana, plantain',
+        'Calcium source: Eggshells, limestone',
+        'Clean water: Shallow container',
+        'Avoid salt and citrus'
+      ],
+      tips: [
+        'Feed in evening (they are nocturnal)',
+        'Remove uneaten food daily',
+        'Provide constant calcium source',
+        'Maintain high humidity (80-90%)',
+        'Keep substrate moist but not wet'
+      ]
+    },
+    health: {
+      commonDiseases: [
+        {
+          name: 'Shell Damage',
+          symptoms: 'Cracked or broken shell',
+          treatment: 'Isolate, provide extra calcium',
+          prevention: 'Handle carefully, provide adequate calcium'
+        },
+        {
+          name: 'Dehydration',
+          symptoms: 'Retracted into shell, inactive',
+          treatment: 'Increase humidity, provide water',
+          prevention: 'Maintain proper humidity levels'
+        },
+        {
+          name: 'Parasites',
+          symptoms: 'Weight loss, inactivity',
+          treatment: 'Clean environment, isolate affected snails',
+          prevention: 'Good hygiene, quarantine new snails'
+        }
+      ],
+      vaccination: [
+        'No vaccinations required',
+        'Focus on good management and hygiene'
+      ]
+    },
+    breeding: {
+      age: '6-8 months for first breeding',
+      cycle: 'Continuous (warm, humid conditions)',
+      signs: 'Mating behavior, egg laying',
+      incubation: '14-21 days (in soil)',
+      care: [
+        'Provide nesting areas with moist soil',
+        'Protect eggs from disturbance',
+        'Maintain proper humidity',
+        'Separate hatchlings from adults'
+      ]
+    },
+    management: {
+      daily: [
+        'Check humidity levels',
+        'Provide fresh food',
+        'Clean water containers',
+        'Observe snail activity',
+        'Remove dead snails'
+      ],
+      weekly: [
+        'Deep clean housing',
+        'Check substrate moisture',
+        'Inspect for health issues',
+        'Record keeping'
+      ],
+      monthly: [
+        'Harvest mature snails',
+        'Separate by size',
+        'Health check',
+        'Equipment maintenance'
+      ]
+    },
+    economics: {
+      initialCost: '₦50 - ₦200 per snail',
+      feedCost: '₦500 - ₦1,000 per 100 snails per month',
+      meatValue: '₦1,500 - ₦3,000 per kg',
+      profitMargin: '60-70% with good management'
+    }
+  },
+  {
+    name: 'Grasscutter',
+    icon: '🐀',
+    category: 'Small Animals',
+    breeds: [
+      {
+        name: 'Greater Cane Rat',
+        characteristics: 'Large, good for meat, herbivorous',
+        suitability: 'All regions',
+        weight: '3-5kg (harvest size)',
+        growthTime: '8-10 months',
+        gestation: '5 months'
+      },
+      {
+        name: 'Local (Nigerian)',
+        characteristics: 'Hardy, disease resistant',
+        suitability: 'All regions',
+        weight: '2-4kg (harvest size)',
+        growthTime: '7-9 months',
+        gestation: '5 months'
+      }
+    ],
+    housing: {
+      space: '1-2 sq meters per animal',
+      requirements: [
+        'Secure concrete or wire mesh pen',
+        'Raised floor (30cm above ground)',
+        'Good ventilation',
+        'Shelter from rain and sun',
+        'Nesting box',
+        'Feeding and watering equipment'
+      ]
+    },
+    feeding: {
+      daily: [
+        'Fresh grass: Ad libitum',
+        'Concentrate feed: 100-150g',
+        'Fresh vegetables: Cabbage, lettuce',
+        'Clean water: Always available',
+        'Mineral supplements'
+      ],
+      tips: [
+        'Feed twice daily',
+        'Provide constant access to water',
+        'Feed fresh grass in evening',
+        'Supplement with kitchen waste',
+        'Ensure adequate fiber in diet'
+      ]
+    },
+    health: {
+      commonDiseases: [
+        {
+          name: 'Respiratory Infections',
+          symptoms: 'Sneezing, nasal discharge, difficulty breathing',
+          treatment: 'Antibiotics, improve ventilation',
+          prevention: 'Good ventilation, clean housing'
+        },
+        {
+          name: 'Diarrhea',
+          symptoms: 'Watery droppings, dehydration',
+          treatment: 'Antibiotics, rehydration',
+          prevention: 'Clean feed and water, avoid sudden diet changes'
+        },
+        {
+          name: 'Parasites',
+          symptoms: 'Weight loss, poor growth',
+          treatment: 'Deworming medication',
+          prevention: 'Regular deworming, clean housing'
+        }
+      ],
+      vaccination: [
+        'No routine vaccinations',
+        'Focus on good management and biosecurity'
+      ]
+    },
+    breeding: {
+      age: '6-8 months for first breeding',
+      cycle: 'Continuous',
+      signs: 'Mating behavior, nesting',
+      gestation: '5 months',
+      care: [
+        'Separate pregnant females',
+        'Provide nesting box',
+        'Extra nutrition',
+        'Monitor during birth'
+      ]
+    },
+    management: {
+      daily: [
+        'Check health and behavior',
+        'Provide feed and water',
+        'Clean housing',
+        'Observe for signs of illness'
+      ],
+      weekly: [
+        'Deep cleaning',
+        'Check body condition',
+        'Inspect for health issues'
+      ],
+      monthly: [
+        'Deworming',
+        'Health check',
+        'Record keeping'
+      ]
+    },
+    economics: {
+      initialCost: '₦5,000 - ₦15,000 per animal',
+      feedCost: '₦2,000 - ₦4,000 per animal per month',
+      meatValue: '₦2,500 - ₦4,000 per kg',
+      profitMargin: '50-60% with good management'
+    }
   }
 ];
 

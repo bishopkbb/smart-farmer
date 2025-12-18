@@ -9,6 +9,7 @@ import TermsOfService from './pages/TermsOfService';
 import OnboardingTour from './components/OnboardingTour';
 import VoiceNavigation from './components/VoiceNavigation';
 import AIPestDetection from './components/AIPestDetection';
+import TextToSpeech from './components/TextToSpeech';
 import { livestockTypes } from './data/livestock';
 import { mixedFarmingSystems, integratedPractices, seasonalPlanning } from './data/mixedFarming';
 import { useT } from './context/TranslationContext';
@@ -286,26 +287,72 @@ const SmartFarmerApp = () => {
   }, [activeTab]);
 
   const crops = [
+    // Cereals
     { name: 'Maize', icon: '🌽', plantingMonths: ['April', 'May', 'June'], harvestTime: '3 months', yield: '3 tons/ha', soilType: 'Loamy' },
     { name: 'Rice', icon: '🌾', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '2.5 tons/ha', soilType: 'Clay' },
-    { name: 'Cassava', icon: '🥔', plantingMonths: ['March', 'April', 'May'], harvestTime: '10 months', yield: '15 tons/ha', soilType: 'Sandy' },
-    { name: 'Tomato', icon: '🍅', plantingMonths: ['March', 'April', 'September'], harvestTime: '2 months', yield: '8 tons/ha', soilType: 'Loamy' },
-    { name: 'Pepper', icon: '🌶️', plantingMonths: ['April', 'May', 'June'], harvestTime: '3 months', yield: '4 tons/ha', soilType: 'Sandy loam' },
-    { name: 'Yam', icon: '🍠', plantingMonths: ['March', 'April'], harvestTime: '8 months', yield: '12 tons/ha', soilType: 'Loamy' },
-    { name: 'Okra', icon: '🥒', plantingMonths: ['March', 'April', 'May', 'September'], harvestTime: '2 months', yield: '5 tons/ha', soilType: 'Sandy loam' },
-    { name: 'Beans', icon: '🫘', plantingMonths: ['April', 'May', 'June'], harvestTime: '2.5 months', yield: '1.5 tons/ha', soilType: 'Loamy' },
-    { name: 'Groundnut', icon: '🥜', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '2 tons/ha', soilType: 'Sandy' },
     { name: 'Sorghum', icon: '🌾', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '2.5 tons/ha', soilType: 'Loamy' },
     { name: 'Millet', icon: '🌾', plantingMonths: ['June', 'July', 'August'], harvestTime: '3 months', yield: '1.5 tons/ha', soilType: 'Sandy' },
-    { name: 'Cowpea', icon: '🫘', plantingMonths: ['May', 'June', 'July', 'August'], harvestTime: '2.5 months', yield: '1.2 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Wheat', icon: '🌾', plantingMonths: ['November', 'December', 'January'], harvestTime: '4 months', yield: '2 tons/ha', soilType: 'Loamy' },
+    
+    // Root Crops
+    { name: 'Cassava', icon: '🥔', plantingMonths: ['March', 'April', 'May'], harvestTime: '10 months', yield: '15 tons/ha', soilType: 'Sandy' },
+    { name: 'Yam', icon: '🍠', plantingMonths: ['March', 'April'], harvestTime: '8 months', yield: '12 tons/ha', soilType: 'Loamy' },
     { name: 'Sweet Potato', icon: '🍠', plantingMonths: ['March', 'April', 'May'], harvestTime: '4 months', yield: '10 tons/ha', soilType: 'Sandy loam' },
     { name: 'Cocoyam', icon: '🥔', plantingMonths: ['March', 'April', 'May'], harvestTime: '7 months', yield: '8 tons/ha', soilType: 'Loamy' },
-    { name: 'Plantain', icon: '🍌', plantingMonths: ['March', 'April', 'May'], harvestTime: '10 months', yield: '15 tons/ha', soilType: 'Loamy' },
-    { name: 'Banana', icon: '🍌', plantingMonths: ['All year'], harvestTime: '9 months', yield: '20 tons/ha', soilType: 'Loamy' },
-    { name: 'Watermelon', icon: '🍉', plantingMonths: ['March', 'April', 'October', 'November'], harvestTime: '3 months', yield: '20 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Potato', icon: '🥔', plantingMonths: ['October', 'November', 'December'], harvestTime: '3 months', yield: '12 tons/ha', soilType: 'Loamy' },
+    { name: 'Carrot', icon: '🥕', plantingMonths: ['October', 'November', 'December'], harvestTime: '3 months', yield: '25 tons/ha', soilType: 'Sandy loam' },
+    
+    // Legumes
+    { name: 'Beans', icon: '🌱', plantingMonths: ['April', 'May', 'June'], harvestTime: '2.5 months', yield: '1.5 tons/ha', soilType: 'Loamy' },
+    { name: 'Cowpea', icon: '🌱', plantingMonths: ['May', 'June', 'July', 'August'], harvestTime: '2.5 months', yield: '1.2 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Groundnut', icon: '🥜', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '2 tons/ha', soilType: 'Sandy' },
+    { name: 'Soybean', icon: '🫘', plantingMonths: ['May', 'June', 'July'], harvestTime: '3 months', yield: '1.8 tons/ha', soilType: 'Loamy' },
+    { name: 'Bambara Nut', icon: '🥜', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '1.5 tons/ha', soilType: 'Sandy' },
+    
+    // Vegetables
+    { name: 'Tomato', icon: '🍅', plantingMonths: ['March', 'April', 'September'], harvestTime: '2 months', yield: '8 tons/ha', soilType: 'Loamy' },
+    { name: 'Pepper', icon: '🌶️', plantingMonths: ['April', 'May', 'June'], harvestTime: '3 months', yield: '4 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Okra', icon: '🥒', plantingMonths: ['March', 'April', 'May', 'September'], harvestTime: '2 months', yield: '5 tons/ha', soilType: 'Sandy loam' },
     { name: 'Cucumber', icon: '🥒', plantingMonths: ['March', 'April', 'September', 'October'], harvestTime: '2 months', yield: '15 tons/ha', soilType: 'Loamy' },
     { name: 'Cabbage', icon: '🥬', plantingMonths: ['September', 'October', 'November'], harvestTime: '3 months', yield: '40 tons/ha', soilType: 'Loamy' },
     { name: 'Onion', icon: '🧅', plantingMonths: ['October', 'November', 'December'], harvestTime: '4 months', yield: '15 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Spinach', icon: '🥬', plantingMonths: ['September', 'October', 'November'], harvestTime: '1.5 months', yield: '20 tons/ha', soilType: 'Loamy' },
+    { name: 'Lettuce', icon: '🥬', plantingMonths: ['October', 'November', 'December'], harvestTime: '2 months', yield: '25 tons/ha', soilType: 'Loamy' },
+    { name: 'Amaranth', icon: '🌿', plantingMonths: ['March', 'April', 'May', 'September'], harvestTime: '1.5 months', yield: '15 tons/ha', soilType: 'Loamy' },
+    { name: 'Pumpkin', icon: '🎃', plantingMonths: ['March', 'April', 'May'], harvestTime: '4 months', yield: '20 tons/ha', soilType: 'Loamy' },
+    { name: 'Eggplant', icon: '🍆', plantingMonths: ['March', 'April', 'September'], harvestTime: '3 months', yield: '12 tons/ha', soilType: 'Loamy' },
+    { name: 'Garden Egg', icon: '🍆', plantingMonths: ['March', 'April', 'May'], harvestTime: '3 months', yield: '10 tons/ha', soilType: 'Loamy' },
+    { name: 'Telfairia', icon: '🥒', plantingMonths: ['March', 'April', 'May'], harvestTime: '4 months', yield: '8 tons/ha', soilType: 'Loamy' },
+    { name: 'Celosia', icon: '🌿', plantingMonths: ['March', 'April', 'May', 'September'], harvestTime: '1.5 months', yield: '12 tons/ha', soilType: 'Loamy' },
+    
+    // Fruits
+    { name: 'Watermelon', icon: '🍉', plantingMonths: ['March', 'April', 'October', 'November'], harvestTime: '3 months', yield: '20 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Plantain', icon: '🍌', plantingMonths: ['March', 'April', 'May'], harvestTime: '10 months', yield: '15 tons/ha', soilType: 'Loamy' },
+    { name: 'Banana', icon: '🍌', plantingMonths: ['All year'], harvestTime: '9 months', yield: '20 tons/ha', soilType: 'Loamy' },
+    { name: 'Orange', icon: '🍊', plantingMonths: ['March', 'April', 'May'], harvestTime: '18 months', yield: '15 tons/ha', soilType: 'Loamy' },
+    { name: 'Mango', icon: '🥭', plantingMonths: ['March', 'April', 'May'], harvestTime: '24 months', yield: '12 tons/ha', soilType: 'Loamy' },
+    { name: 'Pawpaw', icon: '🥭', plantingMonths: ['March', 'April', 'May'], harvestTime: '12 months', yield: '30 tons/ha', soilType: 'Loamy' },
+    { name: 'Pineapple', icon: '🍍', plantingMonths: ['March', 'April', 'May'], harvestTime: '18 months', yield: '25 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Guava', icon: '🍈', plantingMonths: ['March', 'April', 'May'], harvestTime: '24 months', yield: '10 tons/ha', soilType: 'Loamy' },
+    { name: 'Cashew', icon: '🥜', plantingMonths: ['March', 'April', 'May'], harvestTime: '36 months', yield: '1.5 tons/ha', soilType: 'Sandy' },
+    
+    // Cash Crops
+    { name: 'Cocoa', icon: '🍫', plantingMonths: ['March', 'April', 'May'], harvestTime: '36 months', yield: '0.8 tons/ha', soilType: 'Loamy' },
+    { name: 'Oil Palm', icon: '🌴', plantingMonths: ['March', 'April', 'May'], harvestTime: '48 months', yield: '3 tons/ha', soilType: 'Loamy' },
+    { name: 'Rubber', icon: '🌳', plantingMonths: ['March', 'April', 'May'], harvestTime: '60 months', yield: '1.5 tons/ha', soilType: 'Loamy' },
+    { name: 'Cotton', icon: '🌾', plantingMonths: ['May', 'June', 'July'], harvestTime: '5 months', yield: '1.2 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Sugarcane', icon: '🌾', plantingMonths: ['March', 'April', 'May'], harvestTime: '12 months', yield: '60 tons/ha', soilType: 'Loamy' },
+    { name: 'Ginger', icon: '🌿', plantingMonths: ['March', 'April', 'May'], harvestTime: '8 months', yield: '8 tons/ha', soilType: 'Loamy' },
+    { name: 'Turmeric', icon: '🌿', plantingMonths: ['March', 'April', 'May'], harvestTime: '8 months', yield: '6 tons/ha', soilType: 'Loamy' },
+    
+    // Spices & Herbs
+    { name: 'Garlic', icon: '🧄', plantingMonths: ['October', 'November', 'December'], harvestTime: '4 months', yield: '8 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Ginger', icon: '🌿', plantingMonths: ['March', 'April', 'May'], harvestTime: '8 months', yield: '8 tons/ha', soilType: 'Loamy' },
+    { name: 'Tumeric', icon: '🌿', plantingMonths: ['March', 'April', 'May'], harvestTime: '8 months', yield: '6 tons/ha', soilType: 'Loamy' },
+    
+    // Others
+    { name: 'Melon', icon: '🍈', plantingMonths: ['March', 'April', 'May'], harvestTime: '3 months', yield: '15 tons/ha', soilType: 'Sandy loam' },
+    { name: 'Tigernut', icon: '🌰', plantingMonths: ['May', 'June', 'July'], harvestTime: '4 months', yield: '3 tons/ha', soilType: 'Sandy' },
   ];
 
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -574,7 +621,7 @@ const SmartFarmerApp = () => {
                 { crop: 'Tomato', icon: '🍅', price: '₦250', unit: 'per kg', trend: 'down', change: '-5%' },
                 { crop: 'Pepper', icon: '🌶️', price: '₦400', unit: 'per kg', trend: 'up', change: '+12%' },
                 { crop: 'Yam', icon: '🍠', price: '₦200', unit: 'per kg', trend: 'stable', change: '0%' },
-                { crop: 'Beans', icon: '🫘', price: '₦280', unit: 'per kg', trend: 'up', change: '+6%' },
+                { crop: 'Beans', icon: '🌱', price: '₦280', unit: 'per kg', trend: 'up', change: '+6%' },
               ].map((item, idx) => (
                 <div key={idx} className="bg-white border-2 border-gray-200 p-6 rounded-2xl hover:shadow-lg transition-all">
                   <div className="text-4xl mb-3">{item.icon}</div>
@@ -1085,9 +1132,15 @@ const SmartFarmerApp = () => {
 
         {activeTab === 'guide' && (
           <div className="animate-fadeIn">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('guide.title')}</h2>
-              <p className="text-gray-600">{t('guide.subtitle')}</p>
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-green-100 mb-2">{t('guide.title')}</h2>
+                <p className="text-gray-600 dark:text-green-300">{t('guide.subtitle')}</p>
+              </div>
+              <TextToSpeech 
+                text={`${t('guide.title')}. ${t('guide.subtitle')}. ${crops.length} crops available.`}
+                className="ml-4"
+              />
             </div>
 
             <div className="relative mb-6">
@@ -1120,11 +1173,16 @@ const SmartFarmerApp = () => {
             </div>
 
             {selectedCrop && (
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedCrop(null)}>
-                <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                  <div className="text-center mb-6">
+              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedCrop(null)}>
+                <div className="bg-white dark:bg-green-900 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
+                  <div className="text-center mb-6 relative">
+                    <div className="absolute top-0 right-0">
+                      <TextToSpeech 
+                        text={`${selectedCrop.name}. Planting months: ${selectedCrop.plantingMonths.join(', ')}. Harvest time: ${selectedCrop.harvestTime}. Yield: ${selectedCrop.yield}. Soil type: ${selectedCrop.soilType}.`}
+                      />
+                    </div>
                     <div className="text-6xl mb-4">{selectedCrop.icon}</div>
-                    <h2 className="text-3xl font-bold text-gray-800">{selectedCrop.name}</h2>
+                    <h2 className="text-3xl font-bold text-gray-800 dark:text-green-100">{selectedCrop.name}</h2>
                   </div>
                   <div className="space-y-4">
                     <div className="bg-green-50 p-4 rounded-2xl">
@@ -1386,9 +1444,15 @@ const SmartFarmerApp = () => {
 
         {activeTab === 'livestock' && (
           <div className="animate-fadeIn">
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-800 mb-2">{t('livestock.title')}</h2>
-              <p className="text-gray-600">{t('livestock.subtitle')}</p>
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-green-100 mb-2">{t('livestock.title')}</h2>
+                <p className="text-gray-600 dark:text-green-300">{t('livestock.subtitle')}</p>
+              </div>
+              <TextToSpeech 
+                text={`${t('livestock.title')}. ${t('livestock.subtitle')}. ${livestockTypes.length} types of livestock available.`}
+                className="ml-4"
+              />
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -1410,12 +1474,17 @@ const SmartFarmerApp = () => {
             </div>
 
             {selectedLivestock && (
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedLivestock(null)}>
-                <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-4xl w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                  <div className="text-center mb-6">
+              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setSelectedLivestock(null)}>
+                <div className="bg-white dark:bg-green-900 rounded-3xl p-6 sm:p-8 max-w-4xl w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
+                  <div className="text-center mb-6 relative">
+                    <div className="absolute top-0 right-0">
+                      <TextToSpeech 
+                        text={`${selectedLivestock.name}. Category: ${selectedLivestock.category}. ${selectedLivestock.breeds ? `${selectedLivestock.breeds.length} breeds available.` : ''}`}
+                      />
+                    </div>
                     <div className="text-6xl mb-4">{selectedLivestock.icon}</div>
-                    <h2 className="text-3xl font-bold text-gray-800">{selectedLivestock.name}</h2>
-                    <p className="text-gray-600">{selectedLivestock.category}</p>
+                    <h2 className="text-3xl font-bold text-gray-800 dark:text-green-100">{selectedLivestock.name}</h2>
+                    <p className="text-gray-600 dark:text-green-300">{selectedLivestock.category}</p>
                   </div>
 
                   <div className="space-y-6">
