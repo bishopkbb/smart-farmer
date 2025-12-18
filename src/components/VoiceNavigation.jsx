@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, X } from 'lucide-react';
+import { useT } from '../context/TranslationContext';
 
 const VoiceNavigation = ({ onNavigate, onCommand }) => {
+  const { t, languageCode } = useT();
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
@@ -16,7 +18,14 @@ const VoiceNavigation = ({ onNavigate, onCommand }) => {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = 'en-US';
+      // Set language based on user preference
+      const langMap = {
+        'en': 'en-US',
+        'yo': 'yo-NG',
+        'ha': 'ha-NG',
+        'ig': 'ig-NG'
+      };
+      recognition.lang = langMap[languageCode] || 'en-US';
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -128,7 +137,7 @@ const VoiceNavigation = ({ onNavigate, onCommand }) => {
       <div className="fixed bottom-24 right-4 z-40">
         <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-4 shadow-lg max-w-xs">
           <p className="text-sm text-yellow-800">
-            Voice navigation is not supported in this browser. Please use Chrome or Edge.
+            {t('voice.notSupported')}
           </p>
         </div>
       </div>
@@ -140,7 +149,7 @@ const VoiceNavigation = ({ onNavigate, onCommand }) => {
       <div className="bg-white rounded-2xl shadow-2xl border-2 border-green-200 overflow-hidden">
         {isListening && (
           <div className="bg-green-500 text-white px-4 py-2 text-sm font-semibold flex items-center justify-between">
-            <span>🎤 Listening...</span>
+            <span>🎤 {t('voice.listening')}</span>
             <button
               onClick={stopListening}
               className="hover:bg-green-600 rounded-full p-1 transition-all"

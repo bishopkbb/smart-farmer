@@ -76,7 +76,7 @@ const SmartFarmerApp = () => {
     { id: 4, type: 'info', title: 'Market Update', message: 'Maize prices increased by 15%', time: '2 days ago', read: true }
   ];
 
-  const { language, changeLanguage } = useT();
+  const { changeLanguage } = useT();
   const [settings, setSettings] = useState(() => {
     const savedSettings = storage.loadSettings();
     return savedSettings || {
@@ -303,7 +303,7 @@ const SmartFarmerApp = () => {
       daysLeft: daysLeft
     }]);
     
-    showToast.success(`${newLog.crop} log added successfully! 🌱`);
+    showToast.success(`${newLog.crop} ${t('tracker.logAdded')}`);
     setNewLog({ crop: '', datePlanted: '', seedQuantity: '', fertilizer: '', notes: '' });
     setShowAddLogModal(false);
   };
@@ -1838,7 +1838,7 @@ const SmartFarmerApp = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-800 flex items-center">
                 <Settings className="w-6 h-6 mr-2 text-green-600" />
-                Settings
+                {t('settings.title')}
               </h2>
               <button onClick={() => setShowSettings(false)} className="p-2 hover:bg-gray-100 rounded-full transition-all">
                 <X className="w-6 h-6" />
@@ -1847,26 +1847,26 @@ const SmartFarmerApp = () => {
 
             <div className="space-y-6">
               <div className="pb-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Profile</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('settings.profile')}</h3>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-sm text-gray-600">Region</label>
-                    <p className="font-semibold text-gray-800">{userLocation.replace(/^\w/, c => c.toUpperCase())} Nigeria</p>
+                    <label className="text-sm text-gray-600">{t('settings.region')}</label>
+                    <p className="font-semibold text-gray-800">{userLocation ? userLocation.replace(/^\w/, c => c.toUpperCase()) + ' Nigeria' : ''}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Farming Type</label>
-                    <p className="font-semibold text-gray-800">{farmingType.replace(/^\w/, c => c.toUpperCase())}</p>
+                    <label className="text-sm text-gray-600">{t('settings.farmingType')}</label>
+                    <p className="font-semibold text-gray-800">{farmingType ? farmingType.replace(/^\w/, c => c.toUpperCase()) : ''}</p>
                   </div>
                 </div>
               </div>
 
               <div className="pb-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Preferences</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{t('settings.preferences')}</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-800">Notifications</p>
-                      <p className="text-xs text-gray-600">Receive farming reminders</p>
+                      <p className="font-semibold text-gray-800">{t('settings.notifications')}</p>
+                      <p className="text-xs text-gray-600">{t('settings.receiveReminders')}</p>
                     </div>
                     <button
                       onClick={() => setSettings({...settings, notifications: !settings.notifications})}
@@ -1882,8 +1882,8 @@ const SmartFarmerApp = () => {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-gray-800">Dark Mode</p>
-                      <p className="text-xs text-gray-600">Switch to dark theme</p>
+                      <p className="font-semibold text-gray-800">{t('settings.darkMode')}</p>
+                      <p className="text-xs text-gray-600">{t('settings.switchTheme')}</p>
                     </div>
                     <button
                       onClick={() => setSettings({...settings, darkMode: !settings.darkMode})}
@@ -1898,28 +1898,32 @@ const SmartFarmerApp = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">Language</label>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">{t('settings.language')}</label>
                     <select
                       value={settings.language}
-                      onChange={(e) => setSettings({...settings, language: e.target.value})}
+                      onChange={(e) => {
+                        const newLang = e.target.value;
+                        setSettings({...settings, language: newLang});
+                        changeLanguage(newLang);
+                      }}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
                     >
                       <option>English</option>
-                      <option>Hausa</option>
                       <option>Yoruba</option>
+                      <option>Hausa</option>
                       <option>Igbo</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">Units</label>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">{t('settings.units')}</label>
                     <select
                       value={settings.units}
                       onChange={(e) => setSettings({...settings, units: e.target.value})}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
                     >
-                      <option>Metric (kg, ha)</option>
-                      <option>Imperial (lb, acres)</option>
+                      <option>{t('settings.metric')}</option>
+                      <option>{t('settings.imperial')}</option>
                     </select>
                   </div>
                 </div>
@@ -1929,28 +1933,28 @@ const SmartFarmerApp = () => {
                 <button 
                   onClick={() => {
                     storage.saveSettings(settings);
-                    showToast.success('Settings saved successfully! ✅');
+                    showToast.success(t('settings.settingsSaved'));
                     setShowSettings(false);
                   }}
                   className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
                 >
-                  Save Changes
+                  {t('settings.saveChanges')}
                 </button>
                 <button 
                   onClick={() => {
                     storage.clearAll();
                     setShowOnboarding(true);
                     setShowSettings(false);
-                    showToast.info('Returning to onboarding...');
+                    showToast.info(t('settings.returningOnboarding'));
                   }}
                   className="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
                 >
-                  Change Region
+                  {t('settings.changeRegion')}
                 </button>
                 <button 
                   onClick={() => {
                     storage.clearAll();
-                    showToast.success('Signed out successfully. See you soon! 👋');
+                    showToast.success(t('settings.signedOut'));
                     setTimeout(() => {
                       setShowOnboarding(true);
                       setShowSettings(false);
@@ -1959,7 +1963,7 @@ const SmartFarmerApp = () => {
                   }}
                   className="w-full py-3 text-red-600 font-semibold hover:bg-red-50 rounded-xl transition-all"
                 >
-                  Sign Out
+                  {t('settings.signOut')}
                 </button>
               </div>
             </div>
@@ -1971,7 +1975,7 @@ const SmartFarmerApp = () => {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn" onClick={() => setShowAddLogModal(false)}>
           <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Add Farm Log</h2>
+              <h2 className="text-2xl font-bold text-gray-800">{t('tracker.addFarmLog')}</h2>
               <button onClick={() => setShowAddLogModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-all">
                 <X className="w-6 h-6" />
               </button>
@@ -1979,13 +1983,13 @@ const SmartFarmerApp = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Select Crop *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('tracker.selectCrop')}</label>
                 <select
                   value={newLog.crop}
                   onChange={(e) => setNewLog({...newLog, crop: e.target.value})}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all"
                 >
-                  <option value="">Choose crop...</option>
+                  <option value="">{t('tracker.chooseCrop')}</option>
                   {crops.map((crop, idx) => (
                     <option key={idx} value={crop.name}>{crop.icon} {crop.name}</option>
                   ))}
@@ -1993,7 +1997,7 @@ const SmartFarmerApp = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Date Planted *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('tracker.datePlanted')}</label>
                 <input
                   type="date"
                   value={newLog.datePlanted}
@@ -2003,7 +2007,7 @@ const SmartFarmerApp = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Seed Quantity (kg)</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('tracker.seedQuantity')}</label>
                 <input
                   type="number"
                   value={newLog.seedQuantity}
@@ -2014,7 +2018,7 @@ const SmartFarmerApp = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Fertilizer Type</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('tracker.fertilizerType')}</label>
                 <input
                   type="text"
                   value={newLog.fertilizer}
@@ -2025,11 +2029,11 @@ const SmartFarmerApp = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">{t('tracker.notes')}</label>
                 <textarea
                   value={newLog.notes}
                   onChange={(e) => setNewLog({...newLog, notes: e.target.value})}
-                  placeholder="Add any additional notes..."
+                  placeholder={t('tracker.addNotes')}
                   rows="3"
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-all resize-none"
                 />
@@ -2040,14 +2044,14 @@ const SmartFarmerApp = () => {
                   onClick={() => setShowAddLogModal(false)}
                   className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   onClick={handleAddLog}
                   disabled={!newLog.crop || !newLog.datePlanted}
                   className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add Log
+                  {t('tracker.addLog')}
                 </button>
               </div>
             </div>

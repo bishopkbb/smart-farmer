@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Camera, Upload, X, Loader2, AlertCircle, CheckCircle, Sparkles } from 'lucide-react';
 import { showToast } from './ui/Toast';
+import { useT } from '../context/TranslationContext';
 
 // Comprehensive pest database with image-based detection
 const pestDatabase = {
@@ -324,6 +325,7 @@ const diseaseDatabase = {
 };
 
 const AIPestDetection = ({ onPestDetected }) => {
+  const { t } = useT();
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -336,7 +338,7 @@ const AIPestDetection = ({ onPestDetected }) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        showToast.error('Image size should be less than 5MB');
+        showToast.error(t('aiPest.imageSizeError'));
         return;
       }
       
@@ -356,7 +358,7 @@ const AIPestDetection = ({ onPestDetected }) => {
 
   const analyzeImage = async () => {
     if (!selectedImage) {
-      showToast.error('Please select an image first');
+      showToast.error(t('aiPest.selectImageFirst'));
       return;
     }
 
@@ -381,7 +383,7 @@ const AIPestDetection = ({ onPestDetected }) => {
           onPestDetected(detectedPest.name, detectedPest.confidence);
         }
         
-        showToast.success(`Detected: ${detectedPest.name} (${detectedPest.confidence}% confidence)`);
+        showToast.success(`${t('aiPest.pestDetected')}: ${detectedPest.name} (${detectedPest.confidence}% ${t('aiPest.confidence')})`);
       } else {
         setDetectionResult({
           pest: 'Unknown',
@@ -405,7 +407,7 @@ const AIPestDetection = ({ onPestDetected }) => {
           },
           type: 'unknown'
         });
-        showToast.info('Could not identify pest. Please try a clearer image or consult an expert.');
+        showToast.info(t('aiPest.couldNotIdentify'));
       }
       
       setIsAnalyzing(false);
@@ -444,11 +446,11 @@ const AIPestDetection = ({ onPestDetected }) => {
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border-2 border-green-200">
-        <div className="flex items-center space-x-3 mb-4">
+          <div className="flex items-center space-x-3 mb-4">
           <Sparkles className="w-8 h-8 text-green-600" />
           <div>
-            <h3 className="text-xl font-bold text-gray-800">AI Pest Detection</h3>
-            <p className="text-sm text-gray-600">Snap a photo of the pest or affected plant for instant identification</p>
+            <h3 className="text-xl font-bold text-gray-800">{t('aiPest.title')}</h3>
+            <p className="text-sm text-gray-600">{t('aiPest.subtitle')}</p>
           </div>
         </div>
 
@@ -460,7 +462,7 @@ const AIPestDetection = ({ onPestDetected }) => {
                 className="flex flex-col items-center justify-center p-6 bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-green-500 transition-all hover:shadow-lg"
               >
                 <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                <span className="text-sm font-semibold text-gray-700">Upload Photo</span>
+                <span className="text-sm font-semibold text-gray-700">{t('aiPest.uploadPhoto')}</span>
               </button>
               
               <button
@@ -468,7 +470,7 @@ const AIPestDetection = ({ onPestDetected }) => {
                 className="flex flex-col items-center justify-center p-6 bg-white rounded-xl border-2 border-dashed border-gray-300 hover:border-green-500 transition-all hover:shadow-lg"
               >
                 <Camera className="w-8 h-8 text-gray-400 mb-2" />
-                <span className="text-sm font-semibold text-gray-700">Take Photo</span>
+                <span className="text-sm font-semibold text-gray-700">{t('aiPest.takePhoto')}</span>
               </button>
             </div>
 
@@ -491,13 +493,13 @@ const AIPestDetection = ({ onPestDetected }) => {
 
             <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
               <p className="text-sm text-blue-800">
-                <strong>Tips for best results:</strong>
+                <strong>{t('aiPest.tipsForBestResults')}</strong>
               </p>
               <ul className="text-xs text-blue-700 mt-2 space-y-1 list-disc list-inside">
-                <li>Take photo in good lighting</li>
-                <li>Get close to the affected area</li>
-                <li>Include both affected and healthy parts if possible</li>
-                <li>Ensure the image is clear and in focus</li>
+                <li>{t('aiPest.goodLighting')}</li>
+                <li>{t('aiPest.getClose')}</li>
+                <li>{t('aiPest.includeBoth')}</li>
+                <li>{t('aiPest.clearImage')}</li>
               </ul>
             </div>
           </div>
@@ -525,12 +527,12 @@ const AIPestDetection = ({ onPestDetected }) => {
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Analyzing Image...</span>
+                  <span>{t('aiPest.analyzingImage')}</span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-5 h-5" />
-                  <span>Analyze with AI</span>
+                  <span>{t('aiPest.analyzeWithAI')}</span>
                 </>
               )}
             </button>
@@ -549,11 +551,11 @@ const AIPestDetection = ({ onPestDetected }) => {
               )}
               <div>
                 <h3 className="text-xl font-bold text-gray-800">
-                  Detected: {detectionResult.pest}
+                  {t('aiPest.detected')}: {detectionResult.pest}
                 </h3>
                 {detectionResult.confidence > 0 && (
                   <p className="text-sm text-gray-600">
-                    Confidence: {detectionResult.confidence}%
+                    {t('aiPest.confidence')}: {detectionResult.confidence}%
                   </p>
                 )}
               </div>
@@ -577,24 +579,32 @@ const AIPestDetection = ({ onPestDetected }) => {
               {detectionResult.details.treatment && (
                 <>
                   <div className="flex space-x-2 overflow-x-auto pb-2">
-                    {['immediate', 'organic', 'chemical', 'prevention'].map((type) => (
+                    {[
+                      { key: 'immediate', label: t('aiPest.immediate') },
+                      { key: 'organic', label: t('aiPest.organic') },
+                      { key: 'chemical', label: t('aiPest.chemical') },
+                      { key: 'prevention', label: t('pest.prevention') }
+                    ].map((type) => (
                       <button
-                        key={type}
-                        onClick={() => setSelectedTreatment(type)}
+                        key={type.key}
+                        onClick={() => setSelectedTreatment(type.key)}
                         className={`px-4 py-2 rounded-lg font-semibold text-sm whitespace-nowrap transition-all ${
-                          selectedTreatment === type
+                          selectedTreatment === type.key
                             ? 'bg-green-500 text-white shadow-lg'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                       >
-                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                        {type.label}
                       </button>
                     ))}
                   </div>
 
                   <div className="bg-green-50 p-4 rounded-xl border border-green-200">
                     <h4 className="font-bold text-gray-800 mb-3">
-                      {selectedTreatment.charAt(0).toUpperCase() + selectedTreatment.slice(1)} Treatment:
+                      {selectedTreatment === 'immediate' ? t('aiPest.immediate') : 
+                       selectedTreatment === 'organic' ? t('aiPest.organic') :
+                       selectedTreatment === 'chemical' ? t('aiPest.chemical') :
+                       t('pest.prevention')} {t('aiPest.treatment')}:
                     </h4>
                     <ul className="space-y-2">
                       {detectionResult.details.treatment[selectedTreatment]?.map((item, idx) => (
@@ -617,14 +627,14 @@ const AIPestDetection = ({ onPestDetected }) => {
                     : 'bg-green-50 border-2 border-green-300'
                 }`}>
                   <p className="font-semibold text-gray-800">
-                    Severity: <span className={
+                    {t('aiPest.severity')}: <span className={
                       detectionResult.details.severity === 'High' ? 'text-red-600' :
                       detectionResult.details.severity === 'Medium' ? 'text-yellow-600' :
                       'text-green-600'
                     }>{detectionResult.details.severity}</span>
                   </p>
                   <p className="text-sm text-gray-700 mt-1">
-                    {detectionResult.details.urgency}
+                    {t('aiPest.urgency')}: {detectionResult.details.urgency}
                   </p>
                 </div>
               )}

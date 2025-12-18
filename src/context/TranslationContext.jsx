@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useTranslation, getAvailableLanguages } from '../utils/translations';
+import React, { createContext, useContext, useState, useMemo } from 'react';
+import { translations, getAvailableLanguages } from '../utils/translations';
 import { storage } from '../utils/storage';
 
 const TranslationContext = createContext();
@@ -21,8 +21,29 @@ export const TranslationProvider = ({ children }) => {
     return langMap[langName] || 'en';
   };
 
-  const languageCode = getLanguageCode(language);
-  const { t } = useTranslation(languageCode);
+  const languageCode = useMemo(() => getLanguageCode(language), [language]);
+
+  // Translation function
+  const t = useMemo(() => {
+    return (key) => {
+      const keys = key.split('.');
+      let value = translations[languageCode];
+      
+      for (const k of keys) {
+        value = value?.[k];
+        if (value === undefined) {
+          // Fallback to English if translation not found
+          let enValue = translations.en;
+          for (const enK of keys) {
+            enValue = enValue?.[enK];
+          }
+          return enValue || key;
+        }
+      }
+      
+      return value || key;
+    };
+  }, [languageCode]);
 
   const changeLanguage = (newLanguage) => {
     setLanguage(newLanguage);
