@@ -121,8 +121,35 @@ body:not(.dark) .border-green-100 {
 
 .dark body {
   background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
-  color: #ecfdf5 !important;
+  color: #ffffff !important;
   min-height: 100vh;
+}
+
+/* Force all backgrounds to be green in dark mode */
+.dark * {
+  background-color: inherit;
+}
+
+/* Override all white and gray backgrounds to green in dark mode */
+.dark .bg-white,
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-gray-200,
+.dark .bg-gray-300 {
+  background-color: #022c22 !important;
+  color: #ffffff !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #022c22 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #064e3b !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: #065f46 !important;
 }
 
 /* Force white text on dashboard components in dark mode - Target by background color */
@@ -161,8 +188,15 @@ body:not(.dark) .border-green-100 {
 }
 
 .dark .bg-green-900 svg,
-.dark .bg-green-800 svg {
+.dark .bg-green-800 svg,
+.dark svg:not(.text-green-600):not(.text-green-500) {
   color: #ffffff !important;
+}
+
+/* Force all icons to be white in dark mode (except green accent icons) */
+.dark svg.text-green-600,
+.dark svg.text-green-500 {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* Override text color classes when inside green backgrounds */
@@ -177,14 +211,27 @@ body:not(.dark) .border-green-100 {
   color: #ffffff !important;
 }
 
-/* Enhanced contrast for all text in dark mode */
+/* Enhanced contrast for all text in dark mode - Force white text */
 .dark * {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+/* Force all text to be white in dark mode */
+.dark p,
+.dark span,
+.dark div,
+.dark li,
+.dark td,
+.dark th,
+.dark label,
+.dark button:not(.text-green-600):not(.text-green-500),
+.dark a:not(.text-green-600):not(.text-green-500) {
+  color: #ffffff !important;
+}
+
 .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
-  color: #ecfdf5 !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(34, 197, 94, 0.3) !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 255, 255, 0.2) !important;
 }
 
 .dark .bg-gradient-to-br.from-green-50 {
@@ -193,41 +240,41 @@ body:not(.dark) .border-green-100 {
 
 .dark .bg-white {
   background-color: #022c22 !important;
-  color: #ecfdf5 !important;
-  border: 2px solid #22c55e !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3), 0 0 0 1px rgba(34, 197, 94, 0.2) !important;
+  color: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
 }
 
 .dark .bg-gray-50 {
   background-color: #022c22 !important;
-  color: #ecfdf5 !important;
+  color: #ffffff !important;
 }
 
 .dark .bg-gray-100 {
   background-color: #064e3b !important;
-  color: #ecfdf5 !important;
-  border-color: #22c55e !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .dark .bg-gray-200 {
   background-color: #065f46 !important;
-  color: #ecfdf5 !important;
+  color: #ffffff !important;
 }
 
 .dark .bg-green-50 {
   background-color: #022c22 !important;
-  color: #ecfdf5 !important;
-  border-color: #22c55e !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .dark .bg-green-50 * {
-  color: #ecfdf5 !important;
+  color: #ffffff !important;
 }
 
 .dark .bg-green-100 {
   background-color: #064e3b !important;
-  color: #ecfdf5 !important;
-  border-color: #22c55e !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .dark .bg-green-700 {
@@ -282,52 +329,43 @@ body:not(.dark) .border-green-100 {
   border-color: #eab308 !important;
 }
 
-.dark .text-gray-800 {
-  color: #ecfdf5 !important;
-}
-
-.dark .text-gray-700 {
-  color: #d1fae5 !important;
-}
-
-.dark .text-gray-600 {
-  color: #a7f3d0 !important;
-}
-
-.dark .text-gray-500 {
-  color: #86efac !important;
-}
-
-.dark .text-gray-400 {
-  color: #6ee7b7 !important;
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark .text-gray-900,
+.dark .text-gray-300,
+.dark .text-gray-200,
+.dark .text-gray-100 {
+  color: #ffffff !important;
 }
 
 .dark .text-green-600 {
-  color: #4ade80 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
   font-weight: 600;
 }
 
 .dark .text-green-700 {
-  color: #22c55e !important;
+  color: rgba(255, 255, 255, 0.9) !important;
   font-weight: 600;
 }
 
 .dark .text-green-800 {
-  color: #16a34a !important;
+  color: #ffffff !important;
   font-weight: 700;
 }
 
 .dark .text-green-900 {
-  color: #15803d !important;
+  color: #ffffff !important;
   font-weight: 700;
 }
 
-.dark .text-green-100 {
-  color: #dcfce7 !important;
-}
-
-.dark .text-green-200 {
-  color: #bbf7d0 !important;
+.dark .text-green-100,
+.dark .text-green-200,
+.dark .text-green-300,
+.dark .text-green-400 {
+  color: #ffffff !important;
 }
 
 .dark .text-green-500 {
@@ -339,16 +377,45 @@ body:not(.dark) .border-green-100 {
   border-color: #22c55e !important;
 }
 
-.dark .border-green-200 {
-  border-color: #34d399 !important;
+.dark .border-green-200,
+.dark .border-green-100,
+.dark .border-green-300,
+.dark .border-green-400,
+.dark .border-green-500,
+.dark .border-green-600,
+.dark .border-green-700 {
+  border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
-.dark .border-green-100 {
-  border-color: #4ade80 !important;
+/* Force all borders to be white/light in dark mode */
+.dark [class*="border-"]:not(.border-white) {
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-.dark .border-green-500 {
-  border-color: #22c55e !important;
+/* Form elements in dark mode - green background with white text */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #022c22 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Buttons in dark mode - green background with white text */
+.dark button:not(.bg-green-500):not(.bg-green-600):not(.bg-emerald-600) {
+  background-color: #064e3b !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Links in dark mode - white text */
+.dark a:not(.text-green-600):not(.text-green-500) {
+  color: #ffffff !important;
 }
 
 .dark .shadow-xl,
@@ -362,8 +429,9 @@ body:not(.dark) .border-green-100 {
 }
 
 .dark .hover\:bg-gray-100:hover {
-  background-color: #15803d !important;
-  border-color: #22c55e !important;
+  background-color: #064e3b !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
 }
 
 .dark .hover\:bg-gray-200:hover {
