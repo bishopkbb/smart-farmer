@@ -84,10 +84,18 @@ const SmartFarmerApp = () => {
     return savedSettings || {
       notifications: true,
       darkMode: false,
-      language: savedSettings?.language || language || 'English',
+      language: 'English', // Default language, will sync with context after mount
       units: 'Metric'
     };
   });
+  
+  // Sync settings language with context language after mount (only if no saved settings)
+  useEffect(() => {
+    const savedSettings = storage.loadSettings();
+    if (!savedSettings && language && settings.language !== language) {
+      setSettings(prev => ({ ...prev, language }));
+    }
+  }, [language]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [weatherData, setWeatherData] = useState({
     temp: '28°C',
