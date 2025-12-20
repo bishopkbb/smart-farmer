@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light Mode - Truly Light Backgrounds */
+body:not(.dark) {
+  background-color: #ffffff !important;
+  color: #111827;
+}
+
+body:not(.dark) .bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+
+body:not(.dark) .bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Light mode - ensure all backgrounds are truly light and subtle */
+body:not(.dark) .bg-green-50 {
+  background-color: #f0fdf4 !important;
+}
+
+body:not(.dark) .bg-green-100 {
+  background-color: #dcfce7 !important;
+}
+
+body:not(.dark) .bg-emerald-50 {
+  background-color: #ecfdf5 !important;
+}
+
+body:not(.dark) .bg-teal-50 {
+  background-color: #f0fdfa !important;
+}
+
+/* Light mode - make gradients very subtle */
+body:not(.dark) .bg-gradient-to-br.from-green-50 {
+  background: linear-gradient(to bottom right, #f0fdf4, #ffffff, #f0fdfa) !important;
+}
+
+body:not(.dark) .bg-gradient-to-br.from-green-100 {
+  background: linear-gradient(to bottom right, #dcfce7, #f0fdf4, #ecfdf5) !important;
+}
+
+body:not(.dark) .bg-gradient-to-b.from-green-50 {
+  background: linear-gradient(to bottom, #f0fdf4, #ffffff) !important;
+}
+
 /* Enhanced Dark Mode with Prominent Green Theme - High Contrast */
 .dark {
   color-scheme: dark;
@@ -234,11 +278,11 @@
   box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4) !important;
 }
 
-/* Footer in dark mode - keep same colors as light mode */
+/* Footer in dark mode - match the dark mode background gradient */
 .dark footer {
-  background: linear-gradient(to bottom right, #065f46, #064e3b, #047857) !important;
-  border-top: 4px solid #059669 !important;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #065f46 0%, #064e3b 20%, #022c22 100%) !important;
+  border-top: 4px solid #22c55e !important;
+  color: #ecfdf5 !important;
 }
 
 /* Header in dark mode */

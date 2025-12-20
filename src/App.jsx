@@ -913,7 +913,7 @@ const SmartFarmerApp = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50/30 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50/50 via-emerald-50/30 to-teal-50/50 dark:bg-gradient-to-br dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
       <OnboardingTour run={showTour && !showOnboarding} onFinish={handleTourFinish} />
       
       {activeTab === 'home' && <HomePageSEO />}
@@ -1023,11 +1023,11 @@ const SmartFarmerApp = () => {
         </div>
       </div>
 
-      <main className="pt-16 sm:pt-20 pb-20 sm:pb-24 lg:pb-8 px-3 sm:px-4 max-w-7xl mx-auto bg-gradient-to-b from-green-50/30 to-white dark:from-green-900/30 dark:to-green-950 min-h-screen">
+      <main className="pt-16 sm:pt-20 pb-20 sm:pb-24 lg:pb-8 px-3 sm:px-4 max-w-7xl mx-auto bg-gradient-to-b from-white via-green-50/20 to-white dark:from-green-950 dark:via-green-900/30 dark:to-green-950 min-h-screen">
         {activeTab === 'home' && (
           <div className="space-y-6 animate-fadeIn">
             {/* Weather Card - Improved design with green theme */}
-            <div className="bg-gradient-to-br from-green-100 via-emerald-50 to-teal-50 dark:from-green-900 dark:via-emerald-900 dark:to-teal-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg border-2 border-green-200/50 dark:border-green-500/50 transform hover:shadow-xl transition-all">
+            <div className="bg-gradient-to-br from-green-50 via-emerald-50/50 to-teal-50/50 dark:from-green-900 dark:via-emerald-900 dark:to-teal-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg border-2 border-green-200/30 dark:border-green-500/50 transform hover:shadow-xl transition-all">
               <div className="flex items-start justify-between mb-4 sm:mb-6">
                 <div className="flex-1 min-w-0">
                   <p className="text-xs sm:text-sm text-green-800 dark:text-green-200 font-medium mb-1 sm:mb-2">{t('home.todaysWeather')}</p>
@@ -1167,35 +1167,44 @@ const SmartFarmerApp = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {filteredCrops.map((crop, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedCrop(crop)}
-                  className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all text-left"
+                  className="bg-white dark:bg-green-900 p-5 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg dark:shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all text-left border-2 border-green-100 dark:border-green-500 min-h-[160px] sm:min-h-[180px] flex flex-col justify-between"
                 >
-                  <div className="text-5xl mb-3">{crop.icon}</div>
-                  <h3 className="font-bold text-gray-800 mb-1">{crop.name}</h3>
-                  <p className="text-sm text-gray-600">{crop.soilType} soil</p>
-                  <div className="mt-3 flex items-center text-green-600 text-sm font-semibold">
+                  <div>
+                    <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4">{crop.icon}</div>
+                    <h3 className="font-bold text-base sm:text-lg text-gray-800 dark:text-green-100 mb-2 break-words">{crop.name}</h3>
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-green-300 break-words">{crop.soilType} soil</p>
+                  </div>
+                  <div className="mt-auto flex items-center text-green-600 dark:text-green-400 text-xs sm:text-sm font-semibold">
                     <span>Learn more</span>
-                    <ChevronRight className="w-4 h-4 ml-1" />
+                    <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                   </div>
                 </button>
               ))}
             </div>
 
             {selectedCrop && (
-              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 animate-fadeIn" onClick={() => setSelectedCrop(null)}>
-                <div className="bg-white dark:bg-green-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-md w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
+              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 animate-fadeIn" onClick={() => setSelectedCrop(null)}>
+                <div className="bg-white dark:bg-green-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 max-w-md sm:max-w-lg md:max-w-2xl w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[90vh] sm:max-h-[85vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
                   <div className="text-center mb-4 sm:mb-6 relative">
                     <div className="absolute top-0 right-0">
                       <TextToSpeech 
                         text={`${selectedCrop.name}. Planting months: ${selectedCrop.plantingMonths.join(', ')}. Harvest time: ${selectedCrop.harvestTime}. Yield: ${selectedCrop.yield}. Soil type: ${selectedCrop.soilType}.`}
                       />
                     </div>
-                    <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">{selectedCrop.icon}</div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-green-100">{selectedCrop.name}</h2>
+                    <button
+                      onClick={() => setSelectedCrop(null)}
+                      className="absolute top-0 left-0 p-2 hover:bg-gray-100 dark:hover:bg-green-800 rounded-full transition-all"
+                      aria-label="Close"
+                    >
+                      <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-green-300" />
+                    </button>
+                    <div className="text-5xl sm:text-6xl md:text-7xl mb-3 sm:mb-4">{selectedCrop.icon}</div>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 dark:text-green-100">{selectedCrop.name}</h2>
                   </div>
                   <div className="space-y-4">
                     <div className="bg-green-50 p-4 rounded-2xl">
@@ -1239,26 +1248,34 @@ const SmartFarmerApp = () => {
             {isLoading ? (
               <SkeletonGrid count={12} Component={SkeletonMonthCard} columns={4} />
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {months.map((month, idx) => {
                 const recommendedCrops = getRecommendedCrops(month);
                 return (
                   <button
                     key={idx}
                     onClick={() => setSelectedMonth(month)}
-                    className="bg-white dark:bg-green-900 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-lg dark:shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all text-left border-2 border-green-100 dark:border-green-500"
+                    className="bg-white dark:bg-green-900 p-5 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg dark:shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all text-left border-2 border-green-100 dark:border-green-500 min-h-[140px] sm:min-h-[160px] flex flex-col justify-between"
                   >
-                    <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-green-100 mb-1 sm:mb-2">{month}</h3>
-                    <div className="flex flex-wrap gap-1">
-                      {recommendedCrops.slice(0, 3).map((crop, i) => (
-                        <span key={i} className="text-xl">{crop.icon}</span>
-                      ))}
-                      {recommendedCrops.length > 3 && (
-                        <span className="text-sm text-gray-500">+{recommendedCrops.length - 3}</span>
-                      )}
+                    <div>
+                      <h3 className="font-bold text-base sm:text-lg text-gray-800 dark:text-green-100 mb-3 sm:mb-4">{month}</h3>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {recommendedCrops.slice(0, 4).map((crop, i) => (
+                          <span key={i} className="text-2xl sm:text-3xl">{crop.icon}</span>
+                        ))}
+                        {recommendedCrops.length > 4 && (
+                          <span className="text-sm sm:text-base text-gray-500 dark:text-green-400 font-semibold">+{recommendedCrops.length - 4}</span>
+                        )}
+                      </div>
                     </div>
                     {recommendedCrops.length === 0 && (
-                      <p className="text-sm text-gray-400 dark:text-green-400">{t('calendar.noRecommendations')}</p>
+                      <p className="text-sm sm:text-base text-gray-400 dark:text-green-400">{t('calendar.noRecommendations')}</p>
+                    )}
+                    {recommendedCrops.length > 0 && (
+                      <div className="mt-auto flex items-center text-green-600 dark:text-green-400 text-xs sm:text-sm font-semibold">
+                        <span>View crops</span>
+                        <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
+                      </div>
                     )}
                   </button>
                 );
@@ -1267,23 +1284,32 @@ const SmartFarmerApp = () => {
             )}
 
             {selectedMonth && (
-              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 animate-fadeIn" onClick={() => setSelectedMonth(null)}>
-                <div className="bg-white dark:bg-green-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-md w-full shadow-2xl dark:shadow-2xl max-h-[85vh] sm:max-h-[80vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-green-100 mb-4 sm:mb-6">{selectedMonth}</h2>
-                  <div className="space-y-2 sm:space-y-3">
+              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 animate-fadeIn" onClick={() => setSelectedMonth(null)}>
+                <div className="bg-white dark:bg-green-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 max-w-md sm:max-w-lg md:max-w-2xl w-full shadow-2xl dark:shadow-2xl max-h-[90vh] sm:max-h-[85vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 dark:text-green-100">{selectedMonth}</h2>
+                    <button
+                      onClick={() => setSelectedMonth(null)}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-green-800 rounded-full transition-all"
+                      aria-label="Close"
+                    >
+                      <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-green-300" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                     {getRecommendedCrops(selectedMonth).map((crop, idx) => (
-                      <div key={idx} className="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-800 dark:to-emerald-800 rounded-xl sm:rounded-2xl border-2 border-green-200 dark:border-green-500">
-                        <span className="text-3xl sm:text-4xl flex-shrink-0">{crop.icon}</span>
+                      <div key={idx} className="flex items-center space-x-3 sm:space-x-4 p-4 sm:p-5 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-800 dark:to-emerald-800 rounded-xl sm:rounded-2xl border-2 border-green-200 dark:border-green-500 hover:shadow-lg transition-all">
+                        <span className="text-4xl sm:text-5xl md:text-6xl flex-shrink-0">{crop.icon}</span>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-green-100 truncate">{crop.name}</h3>
-                          <p className="text-xs sm:text-sm text-gray-600 dark:text-green-300 truncate">{crop.harvestTime} to harvest</p>
+                          <h3 className="font-bold text-base sm:text-lg md:text-xl text-gray-800 dark:text-green-100 mb-1 sm:mb-2 break-words">{crop.name}</h3>
+                          <p className="text-sm sm:text-base text-gray-600 dark:text-green-300 break-words">{crop.harvestTime} to harvest</p>
                         </div>
                       </div>
                     ))}
                   </div>
                   <button
                     onClick={() => setSelectedMonth(null)}
-                    className="w-full mt-4 sm:mt-6 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transition-all"
+                    className="w-full py-3 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-xl transition-all"
                   >
                     {t('common.close')}
                   </button>
@@ -1473,12 +1499,14 @@ const SmartFarmerApp = () => {
                 <button
                   key={idx}
                   onClick={() => setSelectedLivestock(livestock)}
-                  className="bg-white dark:bg-green-900 p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg dark:shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all text-left border-2 border-green-100 dark:border-green-500"
+                  className="bg-white dark:bg-green-900 p-5 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg dark:shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all text-left border-2 border-green-100 dark:border-green-500 min-h-[160px] sm:min-h-[180px] flex flex-col justify-between"
                 >
-                  <div className="text-4xl sm:text-5xl mb-2 sm:mb-3">{livestock.icon}</div>
-                  <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-green-100 mb-1 truncate">{livestock.name}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-green-300 truncate">{livestock.category}</p>
-                  <div className="mt-2 sm:mt-3 flex items-center text-green-600 dark:text-green-400 text-xs sm:text-sm font-semibold">
+                  <div>
+                    <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4">{livestock.icon}</div>
+                    <h3 className="font-bold text-base sm:text-lg text-gray-800 dark:text-green-100 mb-2 break-words">{livestock.name}</h3>
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-green-300 break-words">{livestock.category}</p>
+                  </div>
+                  <div className="mt-auto flex items-center text-green-600 dark:text-green-400 text-xs sm:text-sm font-semibold">
                     <span>Learn more</span>
                     <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />
                   </div>
@@ -1487,17 +1515,24 @@ const SmartFarmerApp = () => {
             </div>
 
             {selectedLivestock && (
-              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 animate-fadeIn" onClick={() => setSelectedLivestock(null)}>
-                <div className="bg-white dark:bg-green-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 max-w-4xl w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[90vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
+              <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 animate-fadeIn" onClick={() => setSelectedLivestock(null)}>
+                <div className="bg-white dark:bg-green-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 lg:p-10 max-w-4xl w-full shadow-2xl dark:shadow-2xl animate-scaleIn max-h-[90vh] sm:max-h-[85vh] overflow-y-auto border-2 border-green-200 dark:border-green-500" onClick={(e) => e.stopPropagation()}>
                   <div className="text-center mb-4 sm:mb-6 relative">
-                    <div className="absolute top-0 right-0">
+                    <div className="absolute top-0 right-0 flex items-center space-x-2">
                       <TextToSpeech 
                         text={`${selectedLivestock.name}. Category: ${selectedLivestock.category}. ${selectedLivestock.breeds ? `${selectedLivestock.breeds.length} breeds available.` : ''}`}
                       />
+                      <button
+                        onClick={() => setSelectedLivestock(null)}
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-green-800 rounded-full transition-all"
+                        aria-label="Close"
+                      >
+                        <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-green-300" />
+                      </button>
                     </div>
-                    <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">{selectedLivestock.icon}</div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-green-100">{selectedLivestock.name}</h2>
-                    <p className="text-sm sm:text-base text-gray-600 dark:text-green-300">{selectedLivestock.category}</p>
+                    <div className="text-5xl sm:text-6xl md:text-7xl mb-3 sm:mb-4">{selectedLivestock.icon}</div>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 dark:text-green-100">{selectedLivestock.name}</h2>
+                    <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-green-300">{selectedLivestock.category}</p>
                   </div>
 
                   <div className="space-y-4 sm:space-y-6">
@@ -1794,7 +1829,7 @@ const SmartFarmerApp = () => {
         }}
       />
 
-      <footer className="bg-gradient-to-br from-green-800 via-emerald-900 to-teal-900 text-white mt-20 border-t-4 border-green-600">
+      <footer className="bg-gradient-to-br from-green-800 via-emerald-900 to-teal-900 dark:bg-gradient-to-br dark:from-green-900 dark:via-emerald-950 dark:to-teal-950 text-white mt-20 border-t-4 border-green-600 dark:border-green-500">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="animate-slideInLeft">
