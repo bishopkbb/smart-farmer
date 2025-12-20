@@ -934,8 +934,8 @@ const SmartFarmerApp = () => {
                 <Leaf className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-base sm:text-lg font-bold text-gray-900 dark:text-green-100">Smart Farmer</h1>
-                <p className="text-[10px] sm:text-xs text-gray-600 dark:text-green-300 hidden xs:block">{userLocation ? userLocation.replace(/^\w/, c => c.toUpperCase()) + ' ' + t('settings.region') : ''}</p>
+                <h1 className="text-base sm:text-lg font-bold text-black dark:text-green-100">Smart Farmer</h1>
+                <p className="text-[10px] sm:text-xs text-black dark:text-green-300 hidden xs:block">{userLocation ? userLocation.replace(/^\w/, c => c.toUpperCase()) + ' ' + t('settings.region') : ''}</p>
               </div>
             </div>
 
@@ -959,8 +959,8 @@ const SmartFarmerApp = () => {
                   onClick={() => setActiveTab(item.tab)}
                     className={`flex items-center space-x-1 xl:space-x-2 px-2 xl:px-3 py-1.5 xl:py-2 rounded-lg xl:rounded-xl transition-all flex-shrink-0 ${
                     activeTab === item.tab 
-                        ? 'bg-green-100 dark:bg-green-800 text-gray-900 dark:text-green-200 font-semibold shadow-sm' 
-                        : 'text-gray-700 dark:text-green-300 hover:bg-gray-50 dark:hover:bg-green-800'
+                        ? 'bg-green-100 dark:bg-green-800 text-black dark:text-green-200 font-semibold shadow-sm' 
+                        : 'text-black dark:text-green-300 hover:bg-gray-50 dark:hover:bg-green-800'
                   }`}
                 >
                     <item.icon className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0" />
@@ -1012,8 +1012,8 @@ const SmartFarmerApp = () => {
                   <button
                     key={item.tab}
                     onClick={() => setActiveTab(item.tab)}
-              className={`flex flex-col items-center space-y-0.5 sm:space-y-1 transition-all min-w-[50px] sm:min-w-[60px] flex-shrink-0 px-1 ${
-                activeTab === item.tab ? 'text-green-700 dark:text-green-300' : 'text-green-600 dark:text-green-400'
+                    className={`flex flex-col items-center space-y-0.5 sm:space-y-1 transition-all min-w-[50px] sm:min-w-[60px] flex-shrink-0 px-1 ${
+                      activeTab === item.tab ? 'text-black dark:text-green-300' : 'text-black dark:text-green-400'
                     }`}
                   >
               <item.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${activeTab === item.tab ? 'scale-110' : ''} transition-transform`} />
@@ -1030,17 +1030,17 @@ const SmartFarmerApp = () => {
             <div className="bg-white dark:bg-green-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg border-2 border-green-200 dark:border-green-500 transform hover:shadow-xl transition-all">
               <div className="flex items-start justify-between mb-4 sm:mb-6">
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-green-200 font-medium mb-1 sm:mb-2">{t('home.todaysWeather')}</p>
+                  <p className="text-xs sm:text-sm text-black dark:text-green-200 font-medium mb-1 sm:mb-2">{t('home.todaysWeather')}</p>
                   <div className="flex items-baseline space-x-2 sm:space-x-3 mb-1 sm:mb-2">
-                    <span className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-green-100">{weatherData.temp}</span>
+                    <span className="text-4xl sm:text-5xl md:text-6xl font-bold text-black dark:text-green-100">{weatherData.temp}</span>
                     <span className="text-3xl sm:text-4xl">{weatherData.icon || '⛅'}</span>
                   </div>
-                  <p className="text-base sm:text-lg text-gray-800 dark:text-green-300 font-medium truncate">{weatherData.condition}</p>
+                  <p className="text-base sm:text-lg text-black dark:text-green-300 font-medium truncate">{weatherData.condition}</p>
                   {weatherData.feelsLike && (
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-green-400 mt-1">Feels like {weatherData.feelsLike}</p>
+                    <p className="text-xs sm:text-sm text-black dark:text-green-400 mt-1">Feels like {weatherData.feelsLike}</p>
                   )}
                   {!navigator.onLine && (
-                    <p className="text-[10px] sm:text-xs text-gray-500 dark:text-green-400 mt-2 opacity-75">📴 Offline mode - showing cached data</p>
+                    <p className="text-[10px] sm:text-xs text-black dark:text-green-400 mt-2 opacity-75">📴 Offline mode - showing cached data</p>
                   )}
             </div>
                 {weatherData.loading && (
@@ -1051,33 +1051,33 @@ const SmartFarmerApp = () => {
                 <div className="bg-gray-50 dark:bg-green-800 rounded-xl p-3 border border-green-200 dark:border-green-500">
                   <div className="flex items-center space-x-2 mb-1">
                     <Droplets className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    <span className="text-xs text-gray-600 dark:text-green-300 font-medium">Humidity</span>
-        </div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-green-100">{weatherData.humidity}</p>
+                    <span className="text-xs text-black dark:text-green-300 font-medium">Humidity</span>
+                  </div>
+                  <p className="text-lg font-bold text-black dark:text-green-100">{weatherData.humidity}</p>
                 </div>
                 <div className="bg-gray-50 dark:bg-green-800 rounded-xl p-3 border border-green-200 dark:border-green-500">
                   <div className="flex items-center space-x-2 mb-1">
                     <Cloud className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    <span className="text-xs text-gray-600 dark:text-green-300 font-medium">Rainfall</span>
-              </div>
-                  <p className="text-lg font-bold text-gray-900 dark:text-green-100">{weatherData.rainfall}</p>
+                    <span className="text-xs text-black dark:text-green-300 font-medium">Rainfall</span>
+                  </div>
+                  <p className="text-lg font-bold text-black dark:text-green-100">{weatherData.rainfall}</p>
                 </div>
                 {weatherData.windSpeed && (
                   <div className="bg-gray-50 dark:bg-green-800 rounded-xl p-3 border border-green-200 dark:border-green-500">
                     <div className="flex items-center space-x-2 mb-1">
                       <Sun className="w-4 h-4 text-green-600 dark:text-green-400" />
-                      <span className="text-xs text-gray-600 dark:text-green-300 font-medium">Wind</span>
-                </div>
-                    <p className="text-lg font-bold text-gray-900 dark:text-green-100">{weatherData.windSpeed}</p>
+                      <span className="text-xs text-black dark:text-green-300 font-medium">Wind</span>
+                    </div>
+                    <p className="text-lg font-bold text-black dark:text-green-100">{weatherData.windSpeed}</p>
                   </div>
                 )}
                 {weatherData.pressure && (
                   <div className="bg-gray-50 dark:bg-green-800 rounded-xl p-3 border border-green-200 dark:border-green-500">
                     <div className="flex items-center space-x-2 mb-1">
                       <ThermometerSun className="w-4 h-4 text-green-600 dark:text-green-400" />
-                      <span className="text-xs text-gray-600 dark:text-green-300 font-medium">Pressure</span>
+                      <span className="text-xs text-black dark:text-green-300 font-medium">Pressure</span>
                     </div>
-                    <p className="text-lg font-bold text-gray-900 dark:text-green-100">{weatherData.pressure}</p>
+                    <p className="text-lg font-bold text-black dark:text-green-100">{weatherData.pressure}</p>
                   </div>
                 )}
               </div>
@@ -1104,7 +1104,7 @@ const SmartFarmerApp = () => {
                   <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
                   <div className="relative z-10">
                     <action.icon className="w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-3 text-green-600 dark:text-green-300 group-hover:text-white transition-colors" />
-                    <p className="font-semibold text-sm sm:text-base text-gray-900 dark:text-green-100 group-hover:text-white transition-colors line-clamp-2">{action.name}</p>
+                    <p className="font-semibold text-sm sm:text-base text-black dark:text-green-100 group-hover:text-white transition-colors line-clamp-2">{action.name}</p>
                   </div>
                 </button>
               ))}
@@ -1128,13 +1128,13 @@ const SmartFarmerApp = () => {
                         <span className="text-3xl">{crops.find(c => c.name === log.crop)?.icon}</span>
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900 dark:text-green-100">{log.crop}</p>
-                        <p className="text-sm text-gray-700 dark:text-green-300">{log.status}</p>
+                        <p className="font-bold text-black dark:text-green-100">{log.crop}</p>
+                        <p className="text-sm text-black dark:text-green-300">{log.status}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-gray-900 dark:text-green-200">{log.daysLeft}</p>
-                      <p className="text-xs text-gray-600 dark:text-green-400">{t('home.daysToHarvest')}</p>
+                      <p className="text-sm font-bold text-black dark:text-green-200">{log.daysLeft}</p>
+                      <p className="text-xs text-black dark:text-green-400">{t('home.daysToHarvest')}</p>
                     </div>
                   </div>
                 ))}

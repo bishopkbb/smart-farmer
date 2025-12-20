@@ -46,7 +46,8 @@ body:not(.dark) div:not(.text-white):not(.text-green-600):not(.text-green-500),
 body:not(.dark) li,
 body:not(.dark) td,
 body:not(.dark) th,
-body:not(.dark) label {
+body:not(.dark) label,
+body:not(.dark) button:not(.text-white):not(.text-green-600) {
   color: #000000 !important;
 }
 
@@ -56,18 +57,22 @@ body:not(.dark) .text-gray-700,
 body:not(.dark) .text-gray-600,
 body:not(.dark) .text-gray-900,
 body:not(.dark) .text-gray-500,
+body:not(.dark) .text-gray-400,
 body:not(.dark) .text-green-800,
 body:not(.dark) .text-green-900,
-body:not(.dark) .text-green-700 {
+body:not(.dark) .text-green-700,
+body:not(.dark) .text-black {
   color: #000000 !important;
 }
 
-/* Exceptions - keep green only for interactive elements (links, buttons) */
+/* Exceptions - keep green only for interactive elements (links, buttons) and icons */
 body:not(.dark) a.text-green-600,
-body:not(.dark) button.text-green-600,
-body:not(.dark) .text-green-600:hover,
-body:not(.dark) .text-green-500:hover {
-  color: #059669 !important; /* Green for accent links and buttons */
+body:not(.dark) button.text-green-600:not(.text-white),
+body:not(.dark) .text-green-600:hover:not(.text-white),
+body:not(.dark) .text-green-500:hover:not(.text-white),
+body:not(.dark) svg.text-green-600,
+body:not(.dark) svg.text-green-500 {
+  color: #059669 !important; /* Green for accent links, buttons, and icons */
 }
 
 /* Keep white text on colored backgrounds (buttons, badges) */
@@ -76,7 +81,11 @@ body:not(.dark) button.text-white,
 body:not(.dark) .bg-gradient-to-r .text-white,
 body:not(.dark) .bg-green-500 .text-white,
 body:not(.dark) .bg-green-600 .text-white,
-body:not(.dark) .bg-emerald-600 .text-white {
+body:not(.dark) .bg-emerald-600 .text-white,
+body:not(.dark) .bg-orange-500 .text-white,
+body:not(.dark) .bg-red-500 .text-white,
+body:not(.dark) .bg-blue-500 .text-white,
+body:not(.dark) .bg-purple-500 .text-white {
   color: #ffffff !important;
 }
 
