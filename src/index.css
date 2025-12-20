@@ -234,10 +234,11 @@
   box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4) !important;
 }
 
-/* Footer in dark mode - enhanced green gradient */
+/* Footer in dark mode - keep same colors as light mode */
 .dark footer {
-  background: linear-gradient(to bottom right, #15803d, #16a34a, #22c55e, #047857) !important;
-  border-top: 3px solid #34d399 !important;
+  background: linear-gradient(to bottom right, #065f46, #064e3b, #047857) !important;
+  border-top: 4px solid #059669 !important;
+  color: #ffffff !important;
 }
 
 /* Header in dark mode */

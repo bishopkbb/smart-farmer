@@ -78,13 +78,13 @@ const SmartFarmerApp = () => {
     { id: 4, type: 'info', title: 'Market Update', message: 'Maize prices increased by 15%', time: '2 days ago', read: true }
   ];
 
-  const { changeLanguage } = useT();
+  const { changeLanguage, language } = useT();
   const [settings, setSettings] = useState(() => {
     const savedSettings = storage.loadSettings();
     return savedSettings || {
       notifications: true,
       darkMode: false,
-      language: language || 'English',
+      language: savedSettings?.language || language || 'English',
       units: 'Metric'
     };
   });
