@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light Mode - Truly Light Backgrounds */
+/* Light Mode - Clean White with Green Accents Only */
 body:not(.dark) {
   background-color: #ffffff !important;
-  color: #111827;
+  color: #1f2937 !important;
 }
 
 body:not(.dark) .bg-gray-50 {
@@ -16,34 +16,57 @@ body:not(.dark) .bg-white {
   background-color: #ffffff !important;
 }
 
-/* Light mode - ensure all backgrounds are truly light and subtle */
+/* Light mode - remove heavy green backgrounds, use white/gray only */
 body:not(.dark) .bg-green-50 {
-  background-color: #f0fdf4 !important;
+  background-color: #ffffff !important;
 }
 
 body:not(.dark) .bg-green-100 {
-  background-color: #dcfce7 !important;
+  background-color: #f9fafb !important;
 }
 
 body:not(.dark) .bg-emerald-50 {
-  background-color: #ecfdf5 !important;
+  background-color: #ffffff !important;
 }
 
 body:not(.dark) .bg-teal-50 {
-  background-color: #f0fdfa !important;
+  background-color: #ffffff !important;
 }
 
-/* Light mode - make gradients very subtle */
-body:not(.dark) .bg-gradient-to-br.from-green-50 {
-  background: linear-gradient(to bottom right, #f0fdf4, #ffffff, #f0fdfa) !important;
+/* Light mode - ensure all text is dark for readability */
+body:not(.dark) .text-green-800,
+body:not(.dark) .text-green-900,
+body:not(.dark) .text-green-700 {
+  color: #1f2937 !important;
 }
 
+body:not(.dark) .text-green-600 {
+  color: #059669 !important; /* Only use green for accents */
+}
+
+body:not(.dark) .text-gray-800,
+body:not(.dark) .text-gray-700,
+body:not(.dark) .text-gray-600 {
+  color: #1f2937 !important;
+}
+
+/* Light mode - remove green gradients, use white */
+body:not(.dark) .bg-gradient-to-br.from-green-50,
 body:not(.dark) .bg-gradient-to-br.from-green-100 {
-  background: linear-gradient(to bottom right, #dcfce7, #f0fdf4, #ecfdf5) !important;
+  background: #ffffff !important;
 }
 
 body:not(.dark) .bg-gradient-to-b.from-green-50 {
-  background: linear-gradient(to bottom, #f0fdf4, #ffffff) !important;
+  background: #ffffff !important;
+}
+
+/* Light mode - subtle green borders only */
+body:not(.dark) .border-green-200 {
+  border-color: #d1fae5 !important;
+}
+
+body:not(.dark) .border-green-100 {
+  border-color: #ecfdf5 !important;
 }
 
 /* Enhanced Dark Mode with Prominent Green Theme - High Contrast */
