@@ -913,7 +913,7 @@ const SmartFarmerApp = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gradient-to-br dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
+    <div className="min-h-screen bg-white dark:bg-gradient-to-br dark:from-green-950 dark:via-green-900 dark:to-green-950">
       <OnboardingTour run={showTour && !showOnboarding} onFinish={handleTourFinish} />
       
       {activeTab === 'home' && <HomePageSEO />}
@@ -1023,7 +1023,7 @@ const SmartFarmerApp = () => {
               </div>
             </div>
 
-      <main className="pt-16 sm:pt-20 pb-20 sm:pb-24 lg:pb-8 px-3 sm:px-4 max-w-7xl mx-auto bg-white dark:from-green-950 dark:via-green-900/30 dark:to-green-950 min-h-screen">
+      <main className="pt-16 sm:pt-20 pb-20 sm:pb-24 lg:pb-8 px-3 sm:px-4 max-w-7xl mx-auto bg-white dark:bg-gradient-to-b dark:from-green-950 dark:via-green-900 dark:to-green-950 min-h-screen">
         {activeTab === 'home' && (
           <div className="space-y-6 animate-fadeIn">
             {/* Weather Card - Improved design with green theme */}
@@ -1829,23 +1829,23 @@ const SmartFarmerApp = () => {
         }}
       />
 
-      <footer className="bg-gradient-to-br from-green-800 via-emerald-900 to-teal-900 dark:bg-gradient-to-br dark:from-green-900 dark:via-emerald-950 dark:to-teal-950 text-white mt-20 border-t-4 border-green-600 dark:border-green-500">
+      <footer className="bg-gradient-to-br from-green-800 via-emerald-900 to-teal-900 dark:bg-gradient-to-br dark:from-green-950 dark:via-green-900 dark:to-green-950 text-white mt-20 border-t-4 border-green-600 dark:border-green-500">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="animate-slideInLeft">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-md">
-                  <Leaf className="w-6 h-6 text-green-600" />
+                <div className="w-10 h-10 bg-white/20 dark:bg-white/10 rounded-2xl flex items-center justify-center shadow-md">
+                  <Leaf className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-bold">Smart Farmer</h3>
+                <h3 className="text-xl font-bold text-white">Smart Farmer</h3>
               </div>
-              <p className="text-green-100 text-sm leading-relaxed">
+              <p className="text-white text-sm leading-relaxed opacity-90">
                 Empowering Nigerian farmers with smart, localized agricultural insights for better yields and sustainable farming practices.
               </p>
             </div>
 
             <div className="animate-slideInLeft" style={{animationDelay: '0.1s'}}>
-              <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+              <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
               <ul className="space-y-2">
                 {[
                   { name: 'Home', tab: 'home' },
@@ -1857,7 +1857,7 @@ const SmartFarmerApp = () => {
                   <li key={link.name}>
                     <button 
                       onClick={() => setActiveTab(link.tab)}
-                      className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                      className="text-white hover:text-white/80 transition-colors text-sm hover:translate-x-1 transform inline-block opacity-90 hover:opacity-100"
                     >
                       {link.name}
                     </button>
@@ -1867,12 +1867,12 @@ const SmartFarmerApp = () => {
             </div>
 
             <div className="animate-slideInLeft" style={{animationDelay: '0.2s'}}>
-              <h4 className="text-lg font-semibold mb-4">Resources</h4>
+              <h4 className="text-lg font-semibold mb-4 text-white">Resources</h4>
               <ul className="space-y-2">
                 <li>
                   <button 
                     onClick={() => setShowWeatherUpdates(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-white hover:text-white/80 transition-colors text-sm hover:translate-x-1 transform inline-block opacity-90 hover:opacity-100"
                   >
                     Weather Updates
                   </button>
@@ -1880,7 +1880,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowMarketPrices(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-white hover:text-white/80 transition-colors text-sm hover:translate-x-1 transform inline-block opacity-90 hover:opacity-100"
                   >
                     Market Prices
                   </button>
@@ -1888,7 +1888,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowFarmingTips(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-white hover:text-white/80 transition-colors text-sm hover:translate-x-1 transform inline-block opacity-90 hover:opacity-100"
                   >
                     Farming Tips
                   </button>
@@ -1896,7 +1896,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowCommunityForum(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-white hover:text-white/80 transition-colors text-sm hover:translate-x-1 transform inline-block opacity-90 hover:opacity-100"
                   >
                     Community Forum
                   </button>
@@ -1904,7 +1904,7 @@ const SmartFarmerApp = () => {
                 <li>
                   <button 
                     onClick={() => setShowHelpCenter(true)}
-                    className="text-green-100 hover:text-white transition-colors text-sm hover:translate-x-1 transform inline-block"
+                    className="text-white hover:text-white/80 transition-colors text-sm hover:translate-x-1 transform inline-block opacity-90 hover:opacity-100"
                   >
                     Help Center
                   </button>
@@ -1913,10 +1913,10 @@ const SmartFarmerApp = () => {
             </div>
 
             <div className="animate-slideInLeft" style={{animationDelay: '0.3s'}}>
-              <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
+              <h4 className="text-lg font-semibold mb-4 text-white">Connect With Us</h4>
               <div className="space-y-3 mb-4">
-                <a href="mailto:smartfarmer121@gmail.com" className="flex items-center space-x-2 text-green-100 hover:text-white transition-colors text-sm group">
-                  <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <a href="mailto:smartfarmer121@gmail.com" className="flex items-center space-x-2 text-white hover:text-white/80 transition-colors text-sm group opacity-90 hover:opacity-100">
+                  <Mail className="w-4 h-4 text-white group-hover:scale-110 transition-transform" />
                   <span>smartfarmer121@gmail.com</span>
                 </a>
               </div>
@@ -1933,36 +1933,36 @@ const SmartFarmerApp = () => {
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-all transform hover:scale-110 hover:-translate-y-1"
                   >
-                    <social.icon className="w-5 h-5" />
+                    <social.icon className="w-5 h-5 text-white" />
                   </a>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="border-t border-green-700 pt-8 mt-8">
+          <div className="border-t border-white/20 dark:border-green-700 pt-8 mt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-              <p className="text-green-100 text-sm text-center md:text-left">
-                © 2025 Smart Farmer. All rights reserved. Built with <Heart className="w-4 h-4 inline text-red-400 animate-pulse" /> for Nigerian farmers.
+              <p className="text-white text-sm text-center md:text-left opacity-90">
+                © 2025 Smart Farmer. All rights reserved. Built with <Heart className="w-4 h-4 inline text-white animate-pulse" /> for Nigerian farmers.
               </p>
-              <div className="flex flex-wrap justify-center gap-4 text-sm text-green-100">
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-white">
                 <button 
                   onClick={() => setShowPrivacyPolicy(true)}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white/80 transition-colors opacity-90 hover:opacity-100"
                 >
                   Privacy Policy
                 </button>
-                <span>•</span>
+                <span className="opacity-90">•</span>
                 <button 
                   onClick={() => setShowTermsOfService(true)}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white/80 transition-colors opacity-90 hover:opacity-100"
                 >
                   Terms of Service
                 </button>
-                <span>•</span>
+                <span className="opacity-90">•</span>
                 <button 
                   onClick={() => setShowCookiePolicy(true)}
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white/80 transition-colors opacity-90 hover:opacity-100"
                 >
                   Cookie Policy
                 </button>
@@ -1971,7 +1971,7 @@ const SmartFarmerApp = () => {
           </div>
 
           <div className="mt-8 text-center">
-            <p className="text-green-200 text-xs">
+            <p className="text-white text-xs opacity-90">
               Developed by <span className="font-semibold">Ajibade Tosin Francis, Omoyeni Naomi, Sandra Ogechi Ezeugonna & Tolough Nelson Aondongu</span>
             </p>
           </div>

@@ -120,7 +120,7 @@ body:not(.dark) .border-green-100 {
 }
 
 .dark body {
-  background: linear-gradient(135deg, #065f46 0%, #064e3b 20%, #022c22 100%) !important;
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
   color: #ecfdf5 !important;
   min-height: 100vh;
 }
@@ -136,34 +136,34 @@ body:not(.dark) .border-green-100 {
 }
 
 .dark .bg-gradient-to-br.from-green-50 {
-  background: linear-gradient(to bottom right, #065f46, #064e3b) !important;
+  background: linear-gradient(to bottom right, #022c22, #064e3b) !important;
 }
 
 .dark .bg-white {
-  background-color: #0f5132 !important;
+  background-color: #022c22 !important;
   color: #ecfdf5 !important;
   border: 2px solid #22c55e !important;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3), 0 0 0 1px rgba(34, 197, 94, 0.2) !important;
 }
 
 .dark .bg-gray-50 {
-  background-color: #064e3b !important;
+  background-color: #022c22 !important;
   color: #ecfdf5 !important;
 }
 
 .dark .bg-gray-100 {
-  background-color: #065f46 !important;
+  background-color: #064e3b !important;
   color: #ecfdf5 !important;
   border-color: #22c55e !important;
 }
 
 .dark .bg-gray-200 {
-  background-color: #047857 !important;
+  background-color: #065f46 !important;
   color: #ecfdf5 !important;
 }
 
 .dark .bg-green-50 {
-  background-color: #0f5132 !important;
+  background-color: #022c22 !important;
   color: #ecfdf5 !important;
   border-color: #22c55e !important;
 }
@@ -173,9 +173,25 @@ body:not(.dark) .border-green-100 {
 }
 
 .dark .bg-green-100 {
-  background-color: #15803d !important;
-  color: #dcfce7 !important;
-  border-color: #34d399 !important;
+  background-color: #064e3b !important;
+  color: #ecfdf5 !important;
+  border-color: #22c55e !important;
+}
+
+.dark .bg-green-700 {
+  background-color: #065f46 !important;
+}
+
+.dark .bg-green-800 {
+  background-color: #064e3b !important;
+}
+
+.dark .bg-green-900 {
+  background-color: #022c22 !important;
+}
+
+.dark .bg-green-950 {
+  background-color: #022c22 !important;
 }
 
 .dark .bg-blue-50 {
@@ -346,11 +362,50 @@ body:not(.dark) .border-green-100 {
   box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4) !important;
 }
 
+/* Footer - ensure all text and icons are white for maximum readability */
+/* Footer - ensure all text and icons are white for maximum readability */
+footer {
+  color: #ffffff !important;
+}
+
+footer p,
+footer h1,
+footer h2,
+footer h3,
+footer h4,
+footer h5,
+footer h6,
+footer span,
+footer div,
+footer li,
+footer a,
+footer button {
+  color: #ffffff !important;
+}
+
+footer svg {
+  color: #ffffff !important;
+}
+
+/* Override any text color classes in footer */
+footer .text-green-100,
+footer .text-green-200,
+footer .text-green-300,
+footer .text-gray-100,
+footer .text-gray-200,
+footer .text-black {
+  color: #ffffff !important;
+}
+
 /* Footer in dark mode - match the dark mode background gradient */
 .dark footer {
-  background: linear-gradient(135deg, #065f46 0%, #064e3b 20%, #022c22 100%) !important;
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
   border-top: 4px solid #22c55e !important;
-  color: #ecfdf5 !important;
+  color: #ffffff !important;
+}
+
+.dark footer * {
+  color: #ffffff !important;
 }
 
 /* Header in dark mode */
