@@ -939,84 +939,89 @@ const SmartFarmerApp = () => {
               </div>
             </div>
 
-            <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
-              {[
-                { name: t('nav.home'), icon: Home, tab: 'home' },
-                { name: t('nav.guide'), icon: BookOpen, tab: 'guide' },
-                { name: t('nav.calendar'), icon: Calendar, tab: 'calendar' },
-                { name: t('nav.tracker'), icon: Leaf, tab: 'tracker' },
-                { name: t('nav.pest'), icon: Bug, tab: 'pest' },
-                ...(farmingType === 'livestock' || farmingType === 'mixed' ? [
-                  { name: t('nav.livestock'), icon: Heart, tab: 'livestock' }
-                ] : []),
-                ...(farmingType === 'mixed' ? [
-                  { name: t('nav.mixed'), icon: Sparkles, tab: 'mixed' }
-                ] : [])
-              ].map((item) => (
-                <button
-                  key={item.tab}
-                  onClick={() => setActiveTab(item.tab)}
-                  className={`flex items-center space-x-1 xl:space-x-2 px-2 xl:px-4 py-2 rounded-xl transition-all ${
-                    activeTab === item.tab 
-                      ? 'bg-green-100 text-green-700 font-semibold shadow-sm' 
-                      : 'text-green-700 hover:bg-green-50'
-                  }`}
-                >
-                  <item.icon className="w-4 h-4 xl:w-5 xl:h-5" />
-                  <span className="text-xs xl:text-sm hidden xl:inline">{item.name}</span>
-                </button>
-              ))}
-            </nav>
-
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-green-50 dark:bg-green-900 border-t-2 border-green-200 dark:border-green-500 shadow-2xl z-50 safe-area-bottom">
-              <div className="flex justify-around py-2 sm:py-3 px-2">
+            <div className="flex items-center space-x-2 sm:space-x-3 flex-1 justify-end lg:justify-center lg:flex-none">
+              <nav className="hidden lg:flex items-center space-x-2 xl:space-x-3 flex-wrap justify-center max-w-4xl">
                 {[
-                  { name: 'Home', icon: Home, tab: 'home' },
-                  { name: 'Guide', icon: BookOpen, tab: 'guide' },
-                  { name: 'Calendar', icon: Calendar, tab: 'calendar' },
-                  { name: 'Tracker', icon: Leaf, tab: 'tracker' },
-                  { name: 'Pest', icon: Bug, tab: 'pest' },
+                  { name: t('nav.home'), icon: Home, tab: 'home' },
+                  { name: t('nav.guide'), icon: BookOpen, tab: 'guide' },
+                  { name: t('nav.calendar'), icon: Calendar, tab: 'calendar' },
+                  { name: t('nav.tracker'), icon: Leaf, tab: 'tracker' },
+                  { name: t('nav.pest'), icon: Bug, tab: 'pest' },
                   ...(farmingType === 'livestock' || farmingType === 'mixed' ? [
-                    { name: 'Livestock', icon: Heart, tab: 'livestock' }
+                    { name: t('nav.livestock'), icon: Heart, tab: 'livestock' }
                   ] : []),
                   ...(farmingType === 'mixed' ? [
-                    { name: 'Mixed', icon: Sparkles, tab: 'mixed' }
+                    { name: t('nav.mixed'), icon: Sparkles, tab: 'mixed' }
                   ] : [])
                 ].map((item) => (
                   <button
                     key={item.tab}
                     onClick={() => setActiveTab(item.tab)}
-                    className={`flex flex-col items-center space-y-0.5 sm:space-y-1 transition-all min-w-[44px] ${
-                      activeTab === item.tab ? 'text-green-700 dark:text-green-300' : 'text-green-600 dark:text-green-400'
+                    className={`flex items-center space-x-1 xl:space-x-2 px-2 xl:px-3 py-1.5 xl:py-2 rounded-lg xl:rounded-xl transition-all flex-shrink-0 ${
+                      activeTab === item.tab 
+                        ? 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-200 font-semibold shadow-sm' 
+                        : 'text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-800'
                     }`}
                   >
-                    <item.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${activeTab === item.tab ? 'scale-110' : ''} transition-transform`} />
-                    <span className="text-[10px] sm:text-xs font-medium">{item.name}</span>
+                    <item.icon className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0" />
+                    <span className="text-xs xl:text-sm hidden 2xl:inline whitespace-nowrap">{item.name}</span>
                   </button>
                 ))}
-              </div>
-            </div>
+              </nav>
 
-            <div className="flex items-center space-x-3">
-              <button 
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="notification-btn p-2 hover:bg-green-100 rounded-full transition-all relative"
-              >
-                <Bell className="w-5 h-5 text-green-800" />
-                {notifications.filter(n => !n.read).length > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                )}
-              </button>
-              <button 
-                onClick={() => setShowSettings(!showSettings)}
-                className="settings-btn p-2 hover:bg-green-100 rounded-full transition-all"
-              >
-                <Settings className="w-5 h-5 text-green-800" />
-              </button>
+              <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+                <button 
+                  onClick={() => setShowNotifications(!showNotifications)}
+                  className="notification-btn p-1.5 sm:p-2 hover:bg-green-100 dark:hover:bg-green-800 rounded-full transition-all relative flex-shrink-0"
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-green-800 dark:text-green-200" />
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                  )}
+                </button>
+                <button 
+                  onClick={() => setShowSettings(!showSettings)}
+                  className="settings-btn p-1.5 sm:p-2 hover:bg-green-100 dark:hover:bg-green-800 rounded-full transition-all flex-shrink-0"
+                  aria-label="Settings"
+                >
+                  <Settings className="w-4 h-4 sm:w-5 sm:h-5 text-green-800 dark:text-green-200" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </header>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-green-50 dark:bg-green-900 border-t-2 border-green-200 dark:border-green-500 shadow-2xl z-50 safe-area-bottom">
+        <div className="flex justify-around items-center py-2 sm:py-3 px-1 sm:px-2 overflow-x-auto scrollbar-hide">
+          {[
+            { name: 'Home', icon: Home, tab: 'home' },
+            { name: 'Guide', icon: BookOpen, tab: 'guide' },
+            { name: 'Calendar', icon: Calendar, tab: 'calendar' },
+            { name: 'Tracker', icon: Leaf, tab: 'tracker' },
+            { name: 'Pest', icon: Bug, tab: 'pest' },
+            ...(farmingType === 'livestock' || farmingType === 'mixed' ? [
+              { name: 'Livestock', icon: Heart, tab: 'livestock' }
+            ] : []),
+            ...(farmingType === 'mixed' ? [
+              { name: 'Mixed', icon: Sparkles, tab: 'mixed' }
+            ] : [])
+          ].map((item) => (
+            <button
+              key={item.tab}
+              onClick={() => setActiveTab(item.tab)}
+              className={`flex flex-col items-center space-y-0.5 sm:space-y-1 transition-all min-w-[50px] sm:min-w-[60px] flex-shrink-0 px-1 ${
+                activeTab === item.tab ? 'text-green-700 dark:text-green-300' : 'text-green-600 dark:text-green-400'
+              }`}
+            >
+              <item.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${activeTab === item.tab ? 'scale-110' : ''} transition-transform`} />
+              <span className="text-[10px] sm:text-xs font-medium truncate w-full text-center">{item.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       <main className="pt-16 sm:pt-20 pb-20 sm:pb-24 lg:pb-8 px-3 sm:px-4 max-w-7xl mx-auto bg-gradient-to-b from-green-50/30 to-white dark:from-green-900/30 dark:to-green-950 min-h-screen">
         {activeTab === 'home' && (
