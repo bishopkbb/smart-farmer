@@ -5,7 +5,7 @@
 /* Light Mode - Clean White with Green Accents Only */
 body:not(.dark) {
   background-color: #ffffff !important;
-  color: #1f2937 !important;
+  color: #000000 !important;
 }
 
 body:not(.dark) .bg-gray-50 {
@@ -33,21 +33,57 @@ body:not(.dark) .bg-teal-50 {
   background-color: #ffffff !important;
 }
 
-/* Light mode - ensure all text is dark for readability */
+/* Light mode - force all readable text to be black for maximum readability */
+body:not(.dark) p,
+body:not(.dark) h1,
+body:not(.dark) h2,
+body:not(.dark) h3,
+body:not(.dark) h4,
+body:not(.dark) h5,
+body:not(.dark) h6,
+body:not(.dark) span:not(.text-white):not(.text-green-600):not(.text-green-500),
+body:not(.dark) div:not(.text-white):not(.text-green-600):not(.text-green-500),
+body:not(.dark) li,
+body:not(.dark) td,
+body:not(.dark) th,
+body:not(.dark) label {
+  color: #000000 !important;
+}
+
+/* Force all text color classes to black in light mode (except specific exceptions) */
+body:not(.dark) .text-gray-800,
+body:not(.dark) .text-gray-700,
+body:not(.dark) .text-gray-600,
+body:not(.dark) .text-gray-900,
+body:not(.dark) .text-gray-500,
 body:not(.dark) .text-green-800,
 body:not(.dark) .text-green-900,
 body:not(.dark) .text-green-700 {
-  color: #1f2937 !important;
+  color: #000000 !important;
 }
 
-body:not(.dark) .text-green-600 {
-  color: #059669 !important; /* Only use green for accents */
+/* Exceptions - keep green only for interactive elements (links, buttons) */
+body:not(.dark) a.text-green-600,
+body:not(.dark) button.text-green-600,
+body:not(.dark) .text-green-600:hover,
+body:not(.dark) .text-green-500:hover {
+  color: #059669 !important; /* Green for accent links and buttons */
 }
 
-body:not(.dark) .text-gray-800,
-body:not(.dark) .text-gray-700,
-body:not(.dark) .text-gray-600 {
-  color: #1f2937 !important;
+/* Keep white text on colored backgrounds (buttons, badges) */
+body:not(.dark) .text-white,
+body:not(.dark) button.text-white,
+body:not(.dark) .bg-gradient-to-r .text-white,
+body:not(.dark) .bg-green-500 .text-white,
+body:not(.dark) .bg-green-600 .text-white,
+body:not(.dark) .bg-emerald-600 .text-white {
+  color: #ffffff !important;
+}
+
+/* Keep icon colors for decorative elements */
+body:not(.dark) svg.text-green-600,
+body:not(.dark) svg.text-green-500 {
+  color: #059669 !important;
 }
 
 /* Light mode - remove green gradients, use white */
