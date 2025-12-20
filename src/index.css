@@ -363,8 +363,9 @@ body:not(.dark) .border-green-100 {
 }
 
 /* Footer - ensure all text and icons are white for maximum readability */
-/* Footer - ensure all text and icons are white for maximum readability */
+/* Footer uses dark green background in both light and dark mode */
 footer {
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
   color: #ffffff !important;
 }
 
