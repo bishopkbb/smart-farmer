@@ -77,7 +77,7 @@ export default defineConfig({
             urlPattern: /\.(?:js|css)$/,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'static-resources-cache-v2',
+              cacheName: 'static-resources-cache-v3',
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
