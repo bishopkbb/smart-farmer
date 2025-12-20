@@ -46,6 +46,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.openweathermap\.org\/.*/i,
@@ -74,14 +75,23 @@ export default defineConfig({
           },
           {
             urlPattern: /\.(?:js|css)$/,
-            handler: 'StaleWhileRevalidate',
+            handler: 'NetworkFirst',
             options: {
-              cacheName: 'static-resources-cache'
+              cacheName: 'static-resources-cache-v2',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              networkTimeoutSeconds: 3
             }
           }
         ],
         skipWaiting: true,
-        clientsClaim: true
+        clientsClaim: true,
+        navigateFallback: null
       },
       devOptions: {
         enabled: true,
