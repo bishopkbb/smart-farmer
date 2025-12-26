@@ -32,6 +32,12 @@ body:not(.dark) .bg-white {
   background-color: #ffffff !important;
 }
 
+/* Exception: Footer logo container should keep its semi-transparent white background */
+body:not(.dark) footer .bg-white\/20,
+body:not(.dark) footer [class*="bg-white/"] {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
 /* Light mode - remove heavy green backgrounds, use white only */
 body:not(.dark) .bg-green-50,
 body:not(.dark) .bg-green-100 {
@@ -554,11 +560,21 @@ html.dark .bg-gray-300 {
 }
 
 /* Footer - ensure all text and icons are white for maximum readability */
-/* Footer uses dark green background in both light and dark mode */
+/* Footer uses deep dark green background in both light and dark mode */
 footer {
   background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
+  background-color: #022c22 !important;
   border-top: 4px solid #22c55e !important;
   color: #ffffff !important;
+}
+
+/* Override any gradient classes on footer to ensure dark green */
+body:not(.dark) footer,
+body.dark footer,
+html:not(.dark) footer,
+html.dark footer {
+  background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
+  background-color: #022c22 !important;
 }
 
 footer p,
