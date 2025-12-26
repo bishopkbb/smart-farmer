@@ -140,11 +140,17 @@ body:not(.dark) .border-green-100 {
 /* Force all backgrounds to be green in dark mode - removed inherit to prevent interference */
 
 /* Override all white and gray backgrounds to green in dark mode */
-.dark .bg-white,
-.dark .bg-gray-50,
-.dark .bg-gray-100,
-.dark .bg-gray-200,
-.dark .bg-gray-300 {
+/* Only apply when .dark class is on body or html, not on individual elements */
+body.dark .bg-white,
+html.dark .bg-white,
+body.dark .bg-gray-50,
+html.dark .bg-gray-50,
+body.dark .bg-gray-100,
+html.dark .bg-gray-100,
+body.dark .bg-gray-200,
+html.dark .bg-gray-200,
+body.dark .bg-gray-300,
+html.dark .bg-gray-300 {
   background-color: #022c22 !important;
   color: #ffffff !important;
 }
