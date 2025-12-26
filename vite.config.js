@@ -77,7 +77,7 @@ export default defineConfig({
             urlPattern: /\.(?:js|css)$/,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'static-resources-cache-v3',
+              cacheName: 'static-resources-cache-v4',
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
@@ -86,6 +86,21 @@ export default defineConfig({
                 statuses: [0, 200]
               },
               networkTimeoutSeconds: 3
+            }
+          },
+          {
+            urlPattern: /index\.html$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'html-cache-v2',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 // 1 hour
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              networkTimeoutSeconds: 1
             }
           }
         ],
