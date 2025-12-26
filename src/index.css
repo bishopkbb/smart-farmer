@@ -3,9 +3,15 @@
 @tailwind utilities;
 
 /* Light Mode - Clean White with Green Accents Only */
-body:not(.dark) {
+body:not(.dark),
+html:not(.dark) {
   background-color: #ffffff !important;
   color: #000000 !important;
+}
+
+/* Ensure root element doesn't have white overlay in light mode */
+#root:not(.dark) {
+  background-color: transparent !important;
 }
 
 body:not(.dark) .bg-gray-50 {
@@ -119,10 +125,16 @@ body:not(.dark) .border-green-100 {
   color-scheme: dark;
 }
 
-.dark body {
+.dark body,
+.dark html {
   background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
   color: #ffffff !important;
   min-height: 100vh;
+}
+
+/* Ensure root element in dark mode doesn't create overlay */
+.dark #root {
+  background-color: transparent !important;
 }
 
 /* Force all backgrounds to be green in dark mode - removed inherit to prevent interference */
@@ -783,6 +795,18 @@ body {
 
 #root {
   min-height: 100vh;
+  background-color: transparent !important;
+}
+
+/* Prevent any white overlay in light mode */
+body:not(.dark) #root,
+html:not(.dark) #root {
+  background-color: transparent !important;
+}
+
+/* Ensure main container doesn't create overlay */
+body:not(.dark) .min-h-screen.bg-white {
+  background-color: #ffffff !important;
 }
 
 /* Smooth transitions for all interactive elements */
