@@ -32,6 +32,16 @@ body:not(.dark) .bg-white {
   background-color: #ffffff !important;
 }
 
+/* Exception: Footer should always have dark green background, never white */
+body:not(.dark) footer,
+body:not(.dark) footer *,
+body:not(.dark) footer .bg-white,
+body:not(.dark) footer .bg-gray-50,
+body:not(.dark) footer .bg-gray-100 {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
 /* Exception: Footer logo container should keep its semi-transparent white background */
 body:not(.dark) footer .bg-white\/20,
 body:not(.dark) footer [class*="bg-white/"] {
