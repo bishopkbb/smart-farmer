@@ -882,13 +882,24 @@ body:not(.dark) .min-h-screen {
 }
 
 /* Force all section backgrounds to white in light mode */
-body:not(.dark) section,
+body:not(.dark) section:not(footer),
 body:not(.dark) main,
-body:not(.dark) [class*="py-8"],
-body:not(.dark) [class*="py-12"],
-body:not(.dark) div[class*="min-h-screen"] {
+body:not(.dark) [class*="py-8"]:not(footer *),
+body:not(.dark) [class*="py-12"]:not(footer *),
+body:not(.dark) div[class*="min-h-screen"]:not(footer *) {
   background-color: #ffffff !important;
   background: #ffffff !important;
+}
+
+/* Exception: Footer should never be white - always dark green */
+body:not(.dark) footer,
+body:not(.dark) footer section,
+body:not(.dark) footer main,
+body:not(.dark) footer [class*="py-8"],
+body:not(.dark) footer [class*="py-12"],
+body:not(.dark) footer div[class*="min-h-screen"] {
+  background-color: transparent !important;
+  background: transparent !important;
 }
 
 /* Override any green gradient backgrounds in light mode */
