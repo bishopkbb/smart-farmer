@@ -14,21 +14,20 @@ html:not(.dark) {
   background-color: transparent !important;
 }
 
-body:not(.dark) .bg-gray-50 {
-  background-color: #f9fafb !important;
+body:not(.dark) .bg-gray-50,
+body:not(.dark) .bg-gray-100,
+body:not(.dark) .bg-gray-200 {
+  background-color: #ffffff !important;
 }
 
 body:not(.dark) .bg-white {
   background-color: #ffffff !important;
 }
 
-/* Light mode - remove heavy green backgrounds, use white/gray only */
-body:not(.dark) .bg-green-50 {
-  background-color: #ffffff !important;
-}
-
+/* Light mode - remove heavy green backgrounds, use white only */
+body:not(.dark) .bg-green-50,
 body:not(.dark) .bg-green-100 {
-  background-color: #f9fafb !important;
+  background-color: #ffffff !important;
 }
 
 body:not(.dark) .bg-emerald-50 {
@@ -48,12 +47,13 @@ body:not(.dark) h4,
 body:not(.dark) h5,
 body:not(.dark) h6,
 body:not(.dark) span:not(.text-white):not(.text-green-600):not(.text-green-500),
-body:not(.dark) div:not(.text-white):not(.text-green-600):not(.text-green-500),
+body:not(.dark) div:not(.text-white):not(.text-green-600):not(.text-green-500):not([class*="bg-"]),
 body:not(.dark) li,
 body:not(.dark) td,
 body:not(.dark) th,
 body:not(.dark) label,
-body:not(.dark) button:not(.text-white):not(.text-green-600) {
+body:not(.dark) button:not(.text-white):not(.text-green-600),
+body:not(.dark) a:not(.text-white):not(.text-green-600):not(.text-green-500) {
   color: #000000 !important;
 }
 
@@ -64,9 +64,15 @@ body:not(.dark) .text-gray-600,
 body:not(.dark) .text-gray-900,
 body:not(.dark) .text-gray-500,
 body:not(.dark) .text-gray-400,
+body:not(.dark) .text-gray-300,
+body:not(.dark) .text-gray-200,
+body:not(.dark) .text-gray-100,
 body:not(.dark) .text-green-800,
 body:not(.dark) .text-green-900,
 body:not(.dark) .text-green-700,
+body:not(.dark) .text-green-100,
+body:not(.dark) .text-green-200,
+body:not(.dark) .text-green-300,
 body:not(.dark) .text-black {
   color: #000000 !important;
 }
@@ -101,14 +107,21 @@ body:not(.dark) svg.text-green-500 {
   color: #059669 !important;
 }
 
-/* Light mode - remove green gradients, use white */
-body:not(.dark) .bg-gradient-to-br.from-green-50,
-body:not(.dark) .bg-gradient-to-br.from-green-100 {
+/* Light mode - remove all gradients, use white */
+body:not(.dark) [class*="bg-gradient"] {
   background: #ffffff !important;
 }
 
-body:not(.dark) .bg-gradient-to-b.from-green-50 {
-  background: #ffffff !important;
+/* Ensure all colored backgrounds are white in light mode */
+body:not(.dark) .bg-orange-50,
+body:not(.dark) .bg-blue-50,
+body:not(.dark) .bg-purple-50,
+body:not(.dark) .bg-red-50,
+body:not(.dark) .bg-teal-50,
+body:not(.dark) .bg-yellow-50,
+body:not(.dark) .bg-pink-50,
+body:not(.dark) .bg-indigo-50 {
+  background-color: #ffffff !important;
 }
 
 /* Light mode - subtle green borders only */
