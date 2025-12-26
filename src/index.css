@@ -9,9 +9,17 @@ html:not(.dark) {
   color: #000000 !important;
 }
 
-/* Ensure root element doesn't have white overlay in light mode */
-#root:not(.dark) {
-  background-color: transparent !important;
+/* Ensure root element and main containers are white in light mode */
+#root:not(.dark),
+body:not(.dark) #root {
+  background-color: #ffffff !important;
+}
+
+/* Force main container to be white in light mode */
+body:not(.dark) .min-h-screen,
+body:not(.dark) [class*="min-h-screen"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
 
 body:not(.dark) .bg-gray-50,
@@ -108,8 +116,25 @@ body:not(.dark) svg.text-green-500 {
 }
 
 /* Light mode - remove all gradients, use white */
-body:not(.dark) [class*="bg-gradient"] {
+body:not(.dark) [class*="bg-gradient"],
+body:not(.dark) .bg-gradient-to-br,
+body:not(.dark) .bg-gradient-to-b,
+body:not(.dark) .bg-gradient-to-r,
+body:not(.dark) .bg-gradient-to-l,
+body:not(.dark) .bg-gradient-to-t {
   background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+/* Force specific gradient classes to white in light mode */
+body:not(.dark) .from-green-50,
+body:not(.dark) .via-emerald-50,
+body:not(.dark) .to-teal-50,
+body:not(.dark) .from-green-100,
+body:not(.dark) .via-emerald-100,
+body:not(.dark) .to-teal-100 {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
 }
 
 /* Ensure all colored backgrounds are white in light mode */
@@ -824,8 +849,38 @@ html:not(.dark) #root {
 }
 
 /* Ensure main container doesn't create overlay */
-body:not(.dark) .min-h-screen.bg-white {
+body:not(.dark) .min-h-screen.bg-white,
+body:not(.dark) .min-h-screen {
   background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* Force all section backgrounds to white in light mode */
+body:not(.dark) section,
+body:not(.dark) main,
+body:not(.dark) [class*="py-8"],
+body:not(.dark) [class*="py-12"],
+body:not(.dark) div[class*="min-h-screen"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* Override any green gradient backgrounds in light mode */
+body:not(.dark) .from-green-50,
+body:not(.dark) .via-emerald-50,
+body:not(.dark) .to-teal-50,
+body:not(.dark) .from-green-100,
+body:not(.dark) .via-emerald-100,
+body:not(.dark) .to-teal-100 {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+/* Force all divs with bg-gray-50 or bg-gradient to white in light mode */
+body:not(.dark) div.bg-gray-50,
+body:not(.dark) div[class*="bg-gradient"] {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
 
 /* Smooth transitions for all interactive elements */
