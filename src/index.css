@@ -608,11 +608,27 @@ footer h4,
 footer h5,
 footer h6,
 footer span,
-footer div,
 footer li,
 footer a,
 footer button {
   color: #ffffff !important;
+}
+
+/* Footer divs - transparent background except logo container */
+footer div {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Logo container exception - must come after general footer div rule */
+footer div[class*="bg-white/20"],
+footer div[class*="bg-white/10"],
+footer .bg-white\/20,
+footer .bg-white\/10,
+body:not(.dark) footer div[class*="bg-white/20"],
+body:not(.dark) footer div[class*="bg-white/10"] {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 
 footer svg {
