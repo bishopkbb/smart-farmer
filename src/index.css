@@ -571,18 +571,31 @@ html.dark .bg-gray-300 {
 
 /* Footer - ensure all text and icons are white for maximum readability */
 /* Footer uses deep dark green background in both light and dark mode */
-footer {
+/* Use highest specificity to override any other rules */
+footer,
+body footer,
+html footer,
+body:not(.dark) footer,
+body.dark footer,
+html:not(.dark) footer,
+html.dark footer,
+footer.bg-gradient-to-br,
+footer[class*="bg-"] {
   background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
   background-color: #022c22 !important;
   border-top: 4px solid #22c55e !important;
   color: #ffffff !important;
 }
 
-/* Override any gradient classes on footer to ensure dark green */
+/* Force footer to always have dark green - override everything */
 body:not(.dark) footer,
-body.dark footer,
-html:not(.dark) footer,
-html.dark footer {
+body:not(.dark) footer.bg-white,
+body:not(.dark) footer.bg-gray-50,
+body:not(.dark) footer.bg-gray-100,
+body:not(.dark) footer[class*="bg-gradient"],
+body:not(.dark) footer[class*="from-green"],
+body:not(.dark) footer[class*="via-emerald"],
+body:not(.dark) footer[class*="to-teal"] {
   background: linear-gradient(135deg, #022c22 0%, #064e3b 30%, #065f46 100%) !important;
   background-color: #022c22 !important;
 }
